@@ -57,6 +57,13 @@ export function findPackageConflicts(state: GameState, pkg: ContentPackage): Imp
   check('npc', pkg.npcs, (id) => state.npcs[id]?.name, (n: { name: string }) => n.name);
   check('quest', pkg.quests, (id) => state.quests[id]?.name, (q: { name: string }) => q.name);
   check(
+    'handout',
+    pkg.handouts,
+    (id) => state.handouts[id]?.title,
+    (h: { title: string }) => h.title,
+  );
+  check('deck', pkg.decks, (id) => state.decks[id]?.name, (d: { name: string }) => d.name);
+  check(
     'asset',
     (pkg.assets ?? []).map((a) => ({ id: a.asset.id })),
     (id) => state.assets[id]?.fileName,
@@ -212,6 +219,43 @@ export function planPackageImport(
       },
     });
     bump('Quests');
+  }
+  for (const handout of pkg.handouts ?? []) {
+    if (skipped.has(handout.id)) continue;
+    // Ortsbezug nur übernehmen, wenn der Zielbereich existiert — sonst Bibliothek.
+    const areaKnown = handout.areaId && state.areas[mapId(handout.areaId)];
+    events.push({
+      type: 'handout.created',
+      payload: {
+        handout: {
+          ...handout,
+          id: mapId(handout.id),
+          areaId: areaKnown ? mapId(handout.areaId!) : undefined,
+          mapImageId: areaKnown && handout.mapImageId ? mapId(handout.mapImageId) : undefined,
+          position: areaKnown ? handout.position : undefined,
+        },
+      },
+    });
+    bump('Handouts');
+  }
+  for (const deck of pkg.decks ?? []) {
+    if (skipped.has(deck.id)) continue;
+    const areaKnown = deck.areaId && state.areas[mapId(deck.areaId)];
+    events.push({
+      type: 'deck.created',
+      payload: {
+        deck: {
+          ...deck,
+          id: mapId(deck.id),
+          cards: deck.cards.map((card) => ({ ...card, id: mapId(card.id) })),
+          areaId: areaKnown ? mapId(deck.areaId!) : undefined,
+          mapImageId: areaKnown && deck.mapImageId ? mapId(deck.mapImageId) : undefined,
+          position: areaKnown ? deck.position : undefined,
+          lastDrawnCardId: undefined,
+        },
+      },
+    });
+    bump('Decks');
   }
   for (const packaged of pkg.markers ?? []) {
     if (skipped.has(packaged.id)) continue;

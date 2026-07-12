@@ -29,6 +29,9 @@ export type SheetVersionId = string;
 export type CombatantId = string;
 export type CommentId = string;
 export type ImportId = string;
+export type HandoutId = string;
+export type DeckId = string;
+export type DeckCardId = string;
 
 // ---------------------------------------------------------------------------
 // Zeit

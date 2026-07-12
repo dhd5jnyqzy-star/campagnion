@@ -36,6 +36,8 @@ function initialState(e: GameEvent & { type: 'campaign.created' }): GameState {
     npcs: {},
     characters: {},
     groups: {},
+    handouts: {},
+    decks: {},
     sessions: {},
     assets: {},
     activeSessionId: null,
@@ -293,6 +295,40 @@ function applyToDraft(s: GameState, e: GameEvent): void {
       return;
     case 'group.moved':
       s.groups[e.payload.groupId]?.waypoints.push(e.payload.waypoint);
+      return;
+
+    // -- Handouts & Decks (M6) --
+    case 'handout.created':
+      s.handouts[e.payload.handout.id] = e.payload.handout;
+      return;
+    case 'handout.updated':
+      assign(s.handouts[e.payload.handoutId], e.payload.changes);
+      return;
+    case 'handout.moved':
+      assign(s.handouts[e.payload.handoutId], {
+        areaId: e.payload.areaId,
+        mapImageId: e.payload.mapImageId,
+        position: e.payload.position,
+      });
+      return;
+    case 'handout.toggled':
+      assign(s.handouts[e.payload.handoutId], { expanded: e.payload.expanded });
+      return;
+    case 'deck.created':
+      s.decks[e.payload.deck.id] = e.payload.deck;
+      return;
+    case 'deck.updated':
+      assign(s.decks[e.payload.deckId], e.payload.changes);
+      return;
+    case 'deck.moved':
+      assign(s.decks[e.payload.deckId], {
+        areaId: e.payload.areaId,
+        mapImageId: e.payload.mapImageId,
+        position: e.payload.position,
+      });
+      return;
+    case 'deck.cardDrawn':
+      assign(s.decks[e.payload.deckId], { lastDrawnCardId: e.payload.cardId });
       return;
 
     // -- Assets --

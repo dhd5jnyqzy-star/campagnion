@@ -8,8 +8,10 @@
 import { useAppSelector } from '../app/hooks';
 import { AreaPeek } from './panels/AreaPeek';
 import { CharacterPeek } from './panels/CharacterPeek';
+import { DeckPeek } from './panels/DeckPeek';
 import { EncounterPeek } from './panels/EncounterPeek';
 import { GroupPeek } from './panels/GroupPeek';
+import { HandoutPeek } from './panels/HandoutPeek';
 import { MarkerPeek } from './panels/MarkerPeek';
 import { NpcPeek } from './panels/NpcPeek';
 import { QuestPeek } from './panels/QuestPeek';
@@ -54,6 +56,16 @@ export function Sidepanel() {
     case 'group': {
       const group = game.groups[peek.id];
       content = group && <GroupPeek group={group} />;
+      break;
+    }
+    case 'handout': {
+      const handout = game.handouts[peek.id];
+      content = handout && <HandoutPeek handout={handout} />;
+      break;
+    }
+    case 'deck': {
+      const deck = game.decks[peek.id];
+      content = deck && <DeckPeek deck={deck} />;
       break;
     }
   }

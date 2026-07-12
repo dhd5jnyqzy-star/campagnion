@@ -1119,6 +1119,169 @@ svg.canvas.placing {
   gap: 8px;
 }
 
+/* --- Handouts & Decks (M6) --- */
+
+.tile-header {
+  cursor: pointer;
+}
+
+.handout-head {
+  fill: rgba(26, 30, 38, 0.95);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.handout-head.expanded {
+  fill: rgba(35, 41, 54, 0.98);
+  stroke: var(--accent);
+}
+
+.handout-title {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--text);
+  pointer-events: none;
+}
+
+.tile-edit {
+  font-size: 13px;
+  fill: var(--text-muted);
+  cursor: pointer;
+}
+
+.handout-body {
+  background: rgba(15, 17, 21, 0.97);
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 10px 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  touch-action: pan-y;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.deck-shadow {
+  fill: rgba(0, 0, 0, 0.45);
+}
+
+.deck-tile {
+  fill: rgba(26, 30, 38, 0.97);
+  stroke-width: 2.5;
+}
+
+.deck-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.deck-hint {
+  font-size: 11px;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+.richtext p {
+  margin: 0 0 8px;
+}
+
+.richtext h4 {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.richtext ul {
+  margin: 0 0 8px;
+  padding-left: 18px;
+}
+
+.richtext li {
+  margin-bottom: 3px;
+}
+
+.handout-preview {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.deck-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dock-group-title {
+  margin: 10px 2px 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.card-overlay {
+  cursor: default;
+}
+
+.drawn-card {
+  width: min(400px, 92vw);
+  max-height: 84vh;
+  overflow-y: auto;
+  background: #f5f0e6;
+  color: #2a2620;
+  border-radius: 14px;
+  padding: 0 0 16px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
+}
+
+.drawn-card-band {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 14px 14px 0 0;
+}
+
+.drawn-card h2 {
+  margin: 14px 18px 8px;
+}
+
+.drawn-card .richtext {
+  padding: 0 18px;
+}
+
+.drawn-card .richtext h4 {
+  color: #8a7a5c;
+}
+
+.drawn-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 18px 0;
+}
+
+.drawn-card-actions button {
+  background: #fff;
+  color: #2a2620;
+  border-color: #cfc5b0;
+}
+
 /* --- Overlay (Battlemap-Viewer) --- */
 
 .overlay {

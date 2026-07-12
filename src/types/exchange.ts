@@ -27,7 +27,7 @@ import type {
   MapImageId,
   MapPosition,
 } from './common';
-import type { Area, AssetMeta, Encounter, Marker, Npc, Quest } from './entities';
+import type { Area, AssetMeta, Deck, Encounter, Handout, Marker, Npc, Quest } from './entities';
 import type { GameEvent } from './events';
 
 /** Wird bei inkompatiblen Änderungen am Format hochgezählt; Importer prüfen sie. */
@@ -76,6 +76,13 @@ export interface ContentPackage {
   encounters?: PackagedEncounter[];
   npcs?: Npc[];
   quests?: Quest[];
+  /**
+   * Handouts & Decks (M6): Text-Kacheln und Zieh-Karten-Kategorien. Kommen
+   * ohne Ortsbezug (Position weglassen) in der Bibliothek an und werden von
+   * dort auf die Karte platziert.
+   */
+  handouts?: Handout[];
+  decks?: Deck[];
   assets?: AssetManifestEntry[];
 }
 
@@ -113,7 +120,7 @@ export interface EncounterPlacement {
 export interface ImportConflict {
   /** Kollidierende ID (existiert bereits in der Ziel-Kampagne). */
   id: string;
-  entityKind: 'area' | 'marker' | 'encounter' | 'npc' | 'quest' | 'asset';
+  entityKind: 'area' | 'marker' | 'encounter' | 'npc' | 'quest' | 'handout' | 'deck' | 'asset';
   /** Anzeigename der vorhandenen bzw. importierten Entität für den Dialog. */
   existingName: string;
   incomingName: string;

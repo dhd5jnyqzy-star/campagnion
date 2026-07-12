@@ -8,9 +8,11 @@
 import type {
   Area,
   AreaId,
+  Deck,
   Encounter,
   EncounterId,
   GameState,
+  Handout,
   MapImage,
   Marker,
   NpcId,
@@ -151,4 +153,48 @@ export function selectQuestsForArea(state: GameState, areaId: AreaId): Quest[] {
 /** Gruppen, in denen ein Charakter aktuell Mitglied ist. */
 export function selectGroupsForCharacter(state: GameState, characterId: string) {
   return Object.values(state.groups).filter((g) => g.memberIds.includes(characterId));
+}
+
+// ---------------------------------------------------------------------------
+// Handouts & Decks (M6)
+// ---------------------------------------------------------------------------
+
+function isOnMap(
+  item: { areaId?: string; mapImageId?: string; position?: unknown },
+  areaId: AreaId,
+  mapImageId: string,
+  isPrimary: boolean,
+): boolean {
+  return (
+    item.areaId === areaId &&
+    item.position !== undefined &&
+    (item.mapImageId === mapImageId || (isPrimary && item.mapImageId === undefined))
+  );
+}
+
+export function selectHandoutsOnMap(
+  state: GameState,
+  areaId: AreaId,
+  mapImageId: string,
+  isPrimary: boolean,
+): Handout[] {
+  return Object.values(state.handouts).filter((h) => isOnMap(h, areaId, mapImageId, isPrimary));
+}
+
+export function selectDecksOnMap(
+  state: GameState,
+  areaId: AreaId,
+  mapImageId: string,
+  isPrimary: boolean,
+): Deck[] {
+  return Object.values(state.decks).filter((d) => isOnMap(d, areaId, mapImageId, isPrimary));
+}
+
+/** Noch nicht platzierte Handouts/Decks — warten in der Bibliothek. */
+export function selectUnplacedHandouts(state: GameState): Handout[] {
+  return Object.values(state.handouts).filter((h) => !h.position);
+}
+
+export function selectUnplacedDecks(state: GameState): Deck[] {
+  return Object.values(state.decks).filter((d) => !d.position);
 }

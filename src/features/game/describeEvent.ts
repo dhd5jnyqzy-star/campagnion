@@ -99,6 +99,22 @@ export function describeEvent(e: GameEvent): string {
       return 'Gruppe geändert';
     case 'group.moved':
       return `Gruppe weitergezogen (Tag ${e.payload.waypoint.gameDay})`;
+    case 'handout.created':
+      return `Handout "${e.payload.handout.title}" angelegt`;
+    case 'handout.updated':
+      return 'Handout geändert';
+    case 'handout.moved':
+      return 'Handout platziert';
+    case 'handout.toggled':
+      return e.payload.expanded ? 'Handout aufgeklappt' : 'Handout zugeklappt';
+    case 'deck.created':
+      return `Deck "${e.payload.deck.name}" angelegt`;
+    case 'deck.updated':
+      return 'Deck geändert';
+    case 'deck.moved':
+      return 'Deck platziert';
+    case 'deck.cardDrawn':
+      return 'Karte gezogen';
     case 'asset.imported':
       return `Datei "${e.payload.asset.fileName}" importiert`;
   }

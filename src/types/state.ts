@@ -16,9 +16,11 @@ import type {
   AssetId,
   CampaignId,
   CharacterId,
+  DeckId,
   EncounterId,
   EventId,
   GroupId,
+  HandoutId,
   IsoDateTime,
   MapImageId,
   MarkerId,
@@ -31,8 +33,10 @@ import type {
   AssetMeta,
   Campaign,
   Character,
+  Deck,
   Encounter,
   Group,
+  Handout,
   MapImage,
   Marker,
   Npc,
@@ -51,6 +55,8 @@ export interface GameState {
   npcs: Record<NpcId, Npc>;
   characters: Record<CharacterId, Character>;
   groups: Record<GroupId, Group>;
+  handouts: Record<HandoutId, Handout>;
+  decks: Record<DeckId, Deck>;
   sessions: Record<SessionId, Session>;
   assets: Record<AssetId, AssetMeta>;
   /** Laufende Session (session.started ohne session.ended), sonst null. */

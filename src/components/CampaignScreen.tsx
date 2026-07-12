@@ -29,9 +29,10 @@ import {
 import { formatGameTime } from '../lib/gameTime';
 import { newId } from '../lib/ids';
 import { closeCurrentStore } from '../persistence/db';
-import type { Area, GameTime, TimeOfDay } from '../types';
+import type { Area, GameState, GameTime, TimeOfDay } from '../types';
 import { CombatScreen } from './CombatScreen';
 import { Dock } from './Dock';
+import { DrawnCardOverlay } from './DrawnCardOverlay';
 import { ExchangeMenu } from './ExchangeMenu';
 import { HistoryBar } from './HistoryBar';
 import { Sidepanel } from './Sidepanel';
@@ -50,18 +51,37 @@ function advanceClockEvent(clock: GameTime): NewGameEvent {
   return { type: 'world.timeOfDayChanged', payload: { to: TIME_ORDER[i + 1] } };
 }
 
-function placingHint(placing: PlacingMode, encounterName?: string, groupName?: string): string {
+function placingHint(placing: PlacingMode, subjectName?: string): string {
   switch (placing?.kind) {
     case 'marker':
       return 'Tippen, um einen Marker zu setzen';
     case 'area':
       return 'Tippen, um einen neuen Bereich zu platzieren';
     case 'encounter':
-      return `Tippen, um "${encounterName ?? 'Encounter'}" einzuspeisen`;
+      return `Tippen, um "${subjectName ?? 'Encounter'}" einzuspeisen`;
     case 'group':
-      return `Tippen, um "${groupName ?? 'Gruppe'}" zu positionieren`;
+      return `Tippen, um "${subjectName ?? 'Gruppe'}" zu positionieren`;
+    case 'handout':
+      return `Tippen, um "${subjectName ?? 'Handout'}" abzulegen`;
+    case 'deck':
+      return `Tippen, um "${subjectName ?? 'Deck'}" abzulegen`;
     default:
       return '';
+  }
+}
+
+function placingSubject(placing: PlacingMode, state: GameState): string | undefined {
+  switch (placing?.kind) {
+    case 'encounter':
+      return state.encounters[placing.encounterId]?.name;
+    case 'group':
+      return state.groups[placing.groupId]?.name;
+    case 'handout':
+      return state.handouts[placing.handoutId]?.title;
+    case 'deck':
+      return state.decks[placing.deckId]?.name;
+    default:
+      return undefined;
   }
 }
 
@@ -93,11 +113,7 @@ export function CampaignScreen() {
   const mapImage = area ? selectPrimaryMapImage(state, area.id) : undefined;
   const asset = mapImage ? state.assets[mapImage.assetId] : undefined;
 
-  const hint = placingHint(
-    placing,
-    placing?.kind === 'encounter' ? liveState.encounters[placing.encounterId]?.name : undefined,
-    placing?.kind === 'group' ? liveState.groups[placing.groupId]?.name : undefined,
-  );
+  const hint = placingHint(placing, placingSubject(placing, liveState));
 
   const startSession = () => {
     const count = Object.keys(liveState.sessions).length;
@@ -249,6 +265,7 @@ export function CampaignScreen() {
       </main>
 
       {combatEncounterId && !inHistory && <CombatScreen encounterId={combatEncounterId} />}
+      <DrawnCardOverlay />
 
       <input
         ref={fileInputRef}

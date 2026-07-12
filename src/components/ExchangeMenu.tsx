@@ -225,6 +225,8 @@ function PackageImportDialog({ state, onClose }: { state: GameState; onClose: ()
         ['NSCs', parsed.pkg.npcs?.length ?? 0],
         ['Quests', parsed.pkg.quests?.length ?? 0],
         ['Encounter', parsed.pkg.encounters?.length ?? 0],
+        ['Handouts', parsed.pkg.handouts?.length ?? 0],
+        ['Decks', parsed.pkg.decks?.length ?? 0],
         ['Marker', parsed.pkg.markers?.length ?? 0],
         ['Bereiche', parsed.pkg.areas?.length ?? 0],
         ['Assets', parsed.pkg.assets?.length ?? 0],

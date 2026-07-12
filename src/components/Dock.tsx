@@ -11,13 +11,14 @@ import { appendGameEvent, type NewGameEvent } from '../features/game/thunks';
 import { peeked, type PeekKind } from '../features/nav/navSlice';
 import { newId } from '../lib/ids';
 
-type Tab = 'encounters' | 'quests' | 'npcs' | 'party';
+type Tab = 'encounters' | 'quests' | 'npcs' | 'party' | 'notes';
 
 const TAB_LABELS: Record<Tab, string> = {
   encounters: 'Encounter',
   quests: 'Quests',
   npcs: 'NSCs',
   party: 'Gruppe',
+  notes: 'Notizen',
 };
 
 const ENCOUNTER_STATE_DOT: Record<string, string> = {
@@ -120,6 +121,18 @@ export function Dock() {
     );
   };
 
+  const createHandout = () => {
+    const id = newId();
+    create(
+      {
+        type: 'handout.created',
+        payload: { handout: { id, title: 'Neues Handout', body: '', expanded: false } },
+      },
+      'handout',
+      id,
+    );
+  };
+
   const createGroup = () => {
     const id = newId();
     create(
@@ -182,6 +195,45 @@ export function Dock() {
             {Object.values(game.npcs).map((n) => item('npc', n.id, n.name))}
             <button className="dock-new" onClick={createNpc}>
               + Neuer NSC
+            </button>
+          </>
+        )}
+        {tab === 'notes' && (
+          <>
+            {Object.values(game.decks).map((d) =>
+              item(
+                'deck',
+                d.id,
+                d.name,
+                undefined,
+                `${d.cards.length} Karten${d.position ? '' : ' · unplatziert'}`,
+              ),
+            )}
+            {(() => {
+              // Handouts nach Kategorie gruppiert anzeigen.
+              const groups = new Map<string, typeof game.handouts[string][]>();
+              for (const h of Object.values(game.handouts)) {
+                const key = h.category ?? 'Sonstige';
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key)!.push(h);
+              }
+              return [...groups.entries()].map(([category, handouts]) => (
+                <div key={category}>
+                  <p className="dock-group-title">{category}</p>
+                  {handouts.map((h) =>
+                    item(
+                      'handout',
+                      h.id,
+                      h.title,
+                      undefined,
+                      h.position ? (h.expanded ? 'offen' : undefined) : 'unplatziert',
+                    ),
+                  )}
+                </div>
+              ));
+            })()}
+            <button className="dock-new" onClick={createHandout}>
+              + Neues Handout
             </button>
           </>
         )}

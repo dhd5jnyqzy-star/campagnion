@@ -39,7 +39,9 @@ export type PeekKind =
   | 'quest'
   | 'character'
   | 'group'
-  | 'area';
+  | 'area'
+  | 'handout'
+  | 'deck';
 
 export interface PeekTarget {
   kind: PeekKind;
@@ -52,6 +54,8 @@ export type PlacingMode =
   | { kind: 'area' }
   | { kind: 'encounter'; encounterId: string }
   | { kind: 'group'; groupId: string }
+  | { kind: 'handout'; handoutId: string }
+  | { kind: 'deck'; deckId: string }
   | null;
 
 export interface NavSliceState {
@@ -72,6 +76,8 @@ export interface NavSliceState {
    * laufen weiter und sind per Navigation erreichbar.
    */
   combatEncounterId: string | null;
+  /** Gerade gezogene Deck-Karte (Overlay); das Ziehen selbst ist ein Event. */
+  drawnCard: { deckId: string; cardId: string } | null;
 }
 
 const initialState: NavSliceState = {
@@ -85,6 +91,7 @@ const initialState: NavSliceState = {
   placing: null,
   dockOpen: false,
   combatEncounterId: null,
+  drawnCard: null,
 };
 
 let flyNonce = 0;
@@ -126,6 +133,12 @@ const navSlice = createSlice({
     },
     combatClosed(s) {
       s.combatEncounterId = null;
+    },
+    cardShown(s, action: PayloadAction<{ deckId: string; cardId: string }>) {
+      s.drawnCard = action.payload;
+    },
+    cardOverlayClosed(s) {
+      s.drawnCard = null;
     },
     /** Goto (§4.2): animierter Sprung, landet als Ebene im Navigationsstack. */
     gotoRequested(s, action: PayloadAction<NavStackEntry>) {
@@ -170,6 +183,8 @@ export const {
   peekClosed,
   combatOpened,
   combatClosed,
+  cardShown,
+  cardOverlayClosed,
   gotoRequested,
   jumpedBackTo,
   overviewRequested,

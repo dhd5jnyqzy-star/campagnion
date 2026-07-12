@@ -92,6 +92,16 @@ async function persistEvent(
   return { seq, event };
 }
 
+/**
+ * Persistierte Snapshots können aus einer älteren Schema-Version stammen —
+ * neue Collections werden beim Laden leer nachgerüstet (Replay-from-zero
+ * braucht das nicht, initialState kennt das aktuelle Schema).
+ */
+function upgradeSnapshotState(state: GameState): GameState {
+  // Alte Snapshots kennen die M6-Collections noch nicht (der Typ "lügt" hier).
+  return { ...state, handouts: state.handouts ?? {}, decks: state.decks ?? {} };
+}
+
 function requireOpenGame(state: unknown): { campaignId: CampaignId; game: GameState } {
   const { game } = state as GameStateSlice;
   if (!game.campaignId || !game.state) throw new Error('Keine Kampagne geöffnet');
@@ -137,7 +147,7 @@ export const openCampaign = createAsyncThunk(
     if (snap && !rest.some(({ event }) => isCorrectionEvent(event))) {
       state = rest.reduce<GameState | null>(
         (st, { event }) => applyEvent(st, event),
-        snap.snapshot.state,
+        upgradeSnapshotState(snap.snapshot.state),
       );
     } else {
       const all = snap ? await store.getEventsAfter(0) : rest;

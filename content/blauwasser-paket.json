@@ -1,0 +1,1143 @@
+{
+  "formatVersion": 1,
+  "name": "Blauwasser-Kampagne",
+  "description": "Komplette Spielleiter-Vorbereitung des Blauwasser-Archipels: Orte, NSCs, Quests, Encounter mit Statblocks, Briefe, Schiffsprüfungen, Cheat-Sheet und die Überfahrtskarten-Decks. Quelle: die fünf Vorbereitungs-PDFs, vollständig transkribiert.",
+  "npcs": [
+    {
+      "id": "bw1-npc-brenna",
+      "name": "Brenna Salzhand",
+      "description": "Hafenmeisterin von Möwenhafen und Gerüchte-Drehscheibe. Vergibt die Öl-Quest: zwölf Fässer Leuchtfeueröl für drei Türme. Wichtig: Der Auftrag wird hier erteilt, aber das Öl lagert an den Wolfsklippen (Alter Wartturm).",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-alrik",
+      "name": "Alrik Voss",
+      "description": "Kaufmann in Möwenhafen — Agent des rätselhaften Gönners „R.\". Drückt der Crew beiläufig den versiegelten Brief für Alva (Ringklippe) in die Hand: „eine alte Hafenschuld, geht euch nichts an.\" Nervös, verschweigt Details zur Kiste.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-hanne",
+      "name": "Hanne",
+      "description": "Wirtin der „Grauen Möwe\" in Möwenhafen. Seemannsgarn und Feature-Gerüchte — und die Aufhängerin der Wein-Nebenquest: erzählt vom legendären Sturmjahrgang, dessen letzte Fässer mit einem Schiff im Osten sanken.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-corran",
+      "name": "Corran",
+      "description": "Versoffener Lotse in Möwenhafen. Faselt vom Riff — „da fährt keiner mehr\". Kern des Riff-Gerüchts.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-zwielicht",
+      "name": "Zwielichtiger Kontakt",
+      "description": "Namenloser Kontakt in Möwenhafen, der zu früh Interesse an „einer Kiste aus dem Osten\" zeigt — Verbindung zum Messertrupp am Kai.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-jarl",
+      "name": "Jarl",
+      "description": "Fallensteller am Klippenpfad der Wolfsklippen. Warnt vor dem Wolfsrudel und dem Braunbär; bestätigt, dass der Pfad frei und der Karren noch oben ist. Vom Alten Wartturm hält er sich fern.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-tibbs",
+      "name": "Old Tibbs",
+      "description": "Wärter des Nordfeuers, dankbar für die Öl-Lieferung. Erzählt vom „Sand so weit das Auge reicht\" im Osten, wo „etwas Wertvolles\" liegen soll — der Keim der Fehlleitung (Sand-Trick). Warnt vor den Krabbenbänken.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-maren",
+      "name": "Maren Lichthüter",
+      "description": "Wärterin des Klippenfeuers, dankbar fürs Öl. Verweist auf „den Kartenmann an der Ringklippe\" (Alva) und warnt: Die Überfahrt nach Osten ist kein Kinderspiel — Nebel und ein Riff.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-alva",
+      "name": "Alva Rauk",
+      "description": "Kartograph & Hehler an der Ringklippe — Kontaktperson für den Brief (Prüfung 1). Bei intaktem Siegel gibt er die schwarze Kiste, den zweiten Brief (für Marren) und die östliche Seekarte. Bei gebrochenem Siegel bleibt er freundlich, gibt die (scheinbar leere) Kiste — und merkt sich, wer zuerst nach dem Inhalt fragt. Hat Weinflaschen unter der Hand (Sturmjahrgang-Quelle).",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-perrin",
+      "name": "Perrin",
+      "description": "Verzauberter Matrose am Sirenenfels; befreibar. Nach der Rettung warnt er vor den „nassen Toten am Wrack\" und dem Riff dahinter — und wird ein Verbündeter.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-gwynn",
+      "name": "Netz-Gwynn",
+      "description": "Gestrandete Bergerin, haust auf einer Sandbank der östlichen Untiefe. Zeigt zum Wrack, erzählt von der Bergungsprämie in Osthafen und warnt vor Sahuagin, die über die Untiefen streifen.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-nesa",
+      "name": "Nesa Reet",
+      "description": "Älteste der Klippendorf-Fischer. Die Fischer verlieren Boote an den Riffjäger — sie setzt das Kopfgeld auf den Riesenoktopus aus. Belohnung u. a. freie Bootsreparaturen und eine Perle aus dem Nest.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-marren",
+      "name": "Marren Voss",
+      "description": "Werftmeister in Osthafen (alte Werft) — Kontakt B der Prüfung. Nimmt die schwarze Kiste entgegen, prüft Siegel und Scharniere und öffnet sie vor der Crew: die Übergabe der Morgenwind. Reagiert kühl, wenn das Siegel gebrochen oder gelogen wurde.",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-doran",
+      "name": "Doran Kettel",
+      "description": "Hafenmeister von Osthafen. Hat die Bergungsprämie fürs vermisste Ölboot ausgesetzt, bezahlt die dritte Öl-Lieferung ans Hafenfeuer und das Riffjäger-Kopfgeld. Bei ihm gibt es teuren Import-Wein (Nebenquest).",
+      "comments": []
+    },
+    {
+      "id": "bw1-npc-haldric",
+      "name": "Reeder Haldric",
+      "description": "Schiffseigner in Osthafen. Seine Frachter meiden das östliche Fahrwasser, seit der Meeresriese die Flussmündung hält — er setzt das Kopfgeld auf den Grottenhüter aus und zahlt für freie Durchfahrt (Erlegen oder Bestechung).",
+      "comments": []
+    }
+  ],
+  "quests": [
+    {
+      "id": "bw1-q-oel",
+      "name": "Öl für die Leuchtfeuer (Haupt)",
+      "status": "open",
+      "progressNote": "0/3 Türme",
+      "description": "Zwölf Fässer Lampenöl an drei Leuchttürme — vier pro Turm: Nordfeuer, Klippenfeuer, Hafenfeuer. Die schrumpfende Ladung ist der sichtbare Fortschrittsmarker.\n\n• Auftrag in Möwenhafen (Brenna); das Öl liegt an den Wolfsklippen — aber nicht am üblichen Platz\n• Der Alte Wartturm (außer Betrieb, angeblich spukt es) ist noch randvoll; Seeweg heikel (steiler Aufstieg, marode Treppe) → über Land\n• Über den freien Klippenpfad hoch: dort steht ein zurückgelassener Karren für zwölf Fässer; unterwegs lauern die Wölfe (nachts) und der Bär (Bachlauf)\n• Fässer NICHT den Hang hinunterrollen — sie zerbrechen (Ölverlust, Brandgefahr)\n• Vollen Karren zurück nach Möwenhafen, dann per Boot: Nordfeuer (Öl 1), Klippenfeuer (Öl 2)\n• Das Hafenfeuer liegt weit im Osten — erst nach der Ringklippe; Bezahlung bei Doran Kettel\n• Das vermisste Versorgungsboot ist in Wahrheit das Wrack — dort wartet auch Öl-Ladung",
+      "comments": [],
+      "npcIds": [
+        "bw1-npc-brenna",
+        "bw1-npc-jarl",
+        "bw1-npc-tibbs",
+        "bw1-npc-maren",
+        "bw1-npc-doran"
+      ],
+      "areaIds": [],
+      "encounterIds": [
+        "bw1-enc-woelfe",
+        "bw1-enc-baer",
+        "bw1-enc-wrack"
+      ]
+    },
+    {
+      "id": "bw1-q-brief",
+      "name": "Brief & Kiste — Die Prüfung (Haupt)",
+      "status": "open",
+      "progressNote": "Brief unterwegs",
+      "description": "Im Kern eine Prüfung der Crew, getarnt als Botengang. Am Ende gehört ihnen ihr Schiff — die Morgenwind.\n\n• **Prüfung 1 — der Brief:** versiegelt zu Alva (Ringklippe). Siegel intakt → schwarze Kiste, zweiter Brief, östliche Karte. Gebrochen → scheinbar leere Kiste; Alva merkt sich, wer zuerst nach dem Inhalt fragt\n• **Prüfung 2 — die Kiste:** ungeöffnet zu Marren Voss (Osthafen, alte Werft)\n• **In der Kiste:** kein Gold — leere Schiffsplakette, Messingnägel, der zweite Brief. Die Kiste IST die Übergabe des Schiffs\n• **Belohnung:** die Morgenwind + Balliste, Sturmsegel, Nebellaterne, Kartenkasten; Taufe (Name wird eingeschlagen)\n• **Verdient oder gestohlen:** unberührt → warme Übergabe · geöffnet aber ehrlich → harte Prüfung, Chance zur Wiedergutmachung · gelogen/gestohlen → Schiff als Diebesgut + Piraten-Ruf (Piraten parlamentieren leichter, Osthafen wird kühler)\n\nDetails in den Handouts „Brief an Alva\", „Brief an Marren\" und „Die Prüfung\".",
+      "comments": [],
+      "npcIds": [
+        "bw1-npc-alrik",
+        "bw1-npc-alva",
+        "bw1-npc-marren",
+        "bw1-npc-zwielicht"
+      ],
+      "areaIds": [],
+      "encounterIds": [
+        "bw1-enc-messertrupp"
+      ]
+    },
+    {
+      "id": "bw1-q-wein",
+      "name": "Der Sturmjahrgang (Wein, optional)",
+      "status": "open",
+      "progressNote": "0 Flaschen",
+      "description": "Lockere Wein-Jagd durch die ganze Bucht. Ein Sammler zahlt fürstlich für eine echte Flasche des legendären Sturmjahrgangs — und ordentlich für jeden guten Tropfen.\n\n• **Tischwein:** Graue Möwe, Möwenhafen (sicher, billig — der Einstieg)\n• **Geschmuggelte Flaschen:** Ringklippe, Alva (verhandeln oder Gefallen)\n• **Teurer Import:** Osthafen, Händler/Doran (sicher, teuer, Sammlerqualität)\n• **Flasche im Hort:** Flussgrotte, Meeresriese (verhandelbar — er mag feine Tropfen!)\n• **Der echte Sturmjahrgang:** im Laderaum des Wracks (Untote & Riff!)\n\n**Boon:** einmal trinken → 1 Stunde Vorteil auf Rettungswürfe gegen Furcht ODER 2W4+2 temporäre TP.\n**Clou:** Eine feine Flasche besticht den Meeresriesen — der Nichtkampf-Schlüssel zum härtesten Gegner.",
+      "comments": [],
+      "npcIds": [
+        "bw1-npc-hanne",
+        "bw1-npc-alva",
+        "bw1-npc-doran"
+      ],
+      "areaIds": [],
+      "encounterIds": [
+        "bw1-enc-wrack",
+        "bw1-enc-riese"
+      ]
+    },
+    {
+      "id": "bw1-q-kopfgeld-oktopus",
+      "name": "Kopfgeld: Der Riffjäger",
+      "status": "open",
+      "description": "Der Riesenoktopus reißt Boote und Fischer unter Wasser; das Riff-Revier wird gemieden.\n\n• **Auftraggeber & Abgabe:** Nesa Reet (Klippendorf) und/oder Doran Kettel (Osthafen)\n• **Beweisstück:** Schnabel und Tentakel (fällt beim Erlegen automatisch an — Kampf lohnt auch, wenn er zufällig zuerst passiert)\n• **Belohnung:** Gold (nach Stufe) + freie Bootsreparaturen in Klippendorf, eine Perle aus dem Nest, sichere Fangründe\n• **Gerüchte:** Klippendorf-Fischer, Netz-Gwynn, Perrin, Doran",
+      "comments": [],
+      "npcIds": [
+        "bw1-npc-nesa",
+        "bw1-npc-doran",
+        "bw1-npc-gwynn",
+        "bw1-npc-perrin"
+      ],
+      "areaIds": [],
+      "encounterIds": [
+        "bw1-enc-riffjaeger"
+      ]
+    },
+    {
+      "id": "bw1-q-kopfgeld-riese",
+      "name": "Kopfgeld: Der Grottenhüter",
+      "status": "open",
+      "description": "Reeder Haldrics Frachter meiden das östliche Fahrwasser, seit der junge Meeresriese die Flussmündung hält.\n\n• **Zwei Wege:** erlegen ODER mit Wein/glänzenden Dingen bestechen, sodass er das Fahrwasser freigibt\n• **Beweisstück:** Ankerstück (Kampf) oder glänzendes Fundstück / bestätigte freie Durchfahrt (Bestechung)\n• **Belohnung:** Gold + Gunst — Rabatt oder Kreditbrief bei Haldric, ein Schmuckstück aus dem Hort; Erlegen → Ankerschlag (+1 Kriegshammer)\n• **Hinweis:** Der Bestechungsweg spart den Kampf und verzahnt sich mit der Wein-Nebenquest",
+      "comments": [],
+      "npcIds": [
+        "bw1-npc-haldric",
+        "bw1-npc-doran"
+      ],
+      "areaIds": [],
+      "encounterIds": [
+        "bw1-enc-riese"
+      ]
+    }
+  ],
+  "encounters": [
+    {
+      "id": "bw1-enc-krabben",
+      "name": "Klippenkrabben",
+      "description": "**Start:** Zwischen Felsen, Treibgut, Gezeitentümpeln — direkt an den Hafenpfählen von Möwenhafen. Der allererste Mini-Kampf, sanfter Einstieg.\n\n**Riesenkrebs:** RK 15 · TP 13 · Bew 9 m, Schwimmen 9 m · STR 13, GES 15, KON 11, INT 1, WEI 9, CHA 3 · Blindsicht 9 m, Amphibisch\n• Schere +3 — 1W6+1 Wucht; Ziel ist gepackt (Entkommen: STR/GES SG 11)\n\n## Taktik\nNächstes Ziel angreifen, mit den Scheren packen und festhalten.\n\n## Rückzug\nRückzug ins Wasser, sobald 2 Krabben besiegt sind.\n\n## Nicht-Kampf\nAbstand halten, Futter werfen, umgehen; Tierkunde/Naturkunde.\n\n## Belohnung\nKrebsfleisch zum Verkauf, ein paar Silbermünzen.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-krabbe",
+          "name": "Riesenkrebs",
+          "count": 4,
+          "maxHp": 13,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-ratten",
+      "name": "Hafenratten & Straßenpack",
+      "description": "**Start:** Gasse, Kai, Lagerhaus, Tavernenhinterhof in Möwenhafen. Eine Schutzgeld-Nummer in dunkler Gasse — weicher zweiter Schritt mit vielen Nichtkampf-Lösungen.\n\n**Bandit/Hafenschläger:** RK 12 · TP 11 · Bew 9 m · STR 11, GES 12, KON 12, INT 10, WEI 10, CHA 10\n• Säbel/Knüppel +3 — 1W6+1\n• Leichte Armbrust +3 — 1W8+1 Stich\n**Variante Anführer:** TP 16 · Säbel +3, 1W6+1 Hieb (sonst wie Bandit)\n\n## Taktik\nNahkämpfer vorne, Schütze hinten, Anführer macht Druck.\n\n## Rückzug\nFlucht, wenn der Anführer fällt oder 2 Banditen besiegt sind.\n\n## Nicht-Kampf\nEinschüchtern, Bestechen, Überreden, Wachen rufen.\n\n## Belohnung\nKleine Börse, Diebesgut, ein Hinweis (Schmuggler/Kiste).",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-ratten-boss",
+          "name": "Anführer",
+          "count": 1,
+          "maxHp": 16,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 16,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-ratten-schuetze",
+          "name": "Schütze",
+          "count": 1,
+          "maxHp": 11,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-ratten-nah",
+          "name": "Nahkämpfer",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-messertrupp",
+      "name": "Messertrupp am Kai",
+      "description": "**Start:** Lagerhaus, Kai, dunkle Gasse, Zollhaus — lauert NACHDEM die Gruppe die verschlossene Kiste trägt (alternativ Hinterhalt beim Ablegen an der Ringklippe). Verknüpft Kampf und Plot.\n\n**Schmugglerboss (Scout):** RK 13 · TP 16 · Bew 9 m · STR 11, GES 14, KON 12, INT 11, WEI 13, CHA 11 · Naturkunde +4, Wahrnehmung +5, Heimlichkeit +6\n• Mehrfachangriff: 2 Nahkampf- oder 2 Fernkampfangriffe\n• Kurzschwert +4 — 1W6+2 Stich · Langbogen/Armbrust +4 — 1W8+2 Stich\n**Bandit/Schläger:** RK 12 · TP 11 · Säbel/Knüppel +3 — 1W6+1 · Leichte Armbrust +3 — 1W8+1\n\n## Taktik\nAnführer bleibt beweglich, Fernkämpfer nutzen Deckung, Nahkämpfer blockieren Wege.\n\n## Rückzug\nRückzug, wenn der Anführer fällt oder 3 Gegner besiegt sind.\n\n## Nicht-Kampf\nBestechen, Einschüchtern, Beweise anbieten, Wachen rufen, Deal machen.\n\n## Belohnung\nSchmuggler-Börse (ordentlich Gold), Schmuggelware, Hinweis zur Kiste.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-messer-boss",
+          "name": "Schmugglerboss",
+          "count": 1,
+          "maxHp": 16,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 16,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-messer-nah",
+          "name": "Nahkämpfer",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-messer-fern",
+          "name": "Fernkämpfer",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-woelfe",
+      "name": "Wölfe auf der Klippe",
+      "description": "**Start:** Gebüsch, Felsen, Klippenpfad, Nachtlager — auf dem Klippenpfad der Wolfsklippen, hin wie zurück (nachts).\n\n**Wolf:** RK 13 · TP 11 · Bew 12 m · STR 12, GES 15, KON 12, INT 3, WEI 12, CHA 6 · Wahrn. +3, Heimlichkeit +4 · Scharfes Gehör & Geruch · Rudeltaktik\n• Biss +4 — 2W4+2 Stich; bei Treffer STR-RW SG 11 oder Ziel fällt zu Boden\n\n## Taktik\nRudel umkreist die Gruppe, 2 Wölfe greifen dasselbe Ziel an.\n\n## Rückzug\nFlucht, sobald 1–2 Wölfe schwer verletzt oder besiegt sind.\n\n## Nicht-Kampf\nFeuer, Futter, Lärm, langsamer Rückzug; Tierkunde.\n\n## Belohnung\nWolfsfelle zum Verkauf.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-wolf",
+          "name": "Wolf",
+          "count": 5,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-baer",
+      "name": "Der hungrige Küstenbär",
+      "description": "**Start:** Höhle am Bachlauf mit Fischresten, Dickicht — Wolfsklippen. Brüllt und droht zuerst; vermeidbar.\n\n**Braunbär:** RK 11 · TP 34 · Bew 12 m, Klettern 9 m · STR 19, GES 10, KON 16, INT 2, WEI 13, CHA 7 · Wahrn. +3 · Scharfer Geruchssinn\n• Mehrfachangriff: Biss + Klauen\n• Biss +5 — 1W8+4 Stich · Klauen +5 — 2W6+4 Hieb\n\n## Taktik\nBrüllen, drohen, dann das nächste Ziel angreifen.\n\n## Rückzug\nRückzug bei halben TP, wenn möglich.\n\n## Nicht-Kampf\nFutter, Rückzug, Feuer, Lärm, Tierkunde.\n\n## Belohnung\nBärenfell; in der Höhle ein Münz-Cache früherer Opfer.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-baer",
+          "name": "Braunbär",
+          "count": 1,
+          "maxHp": 34,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 34,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-beiboot",
+      "name": "Piraten-Beiboot",
+      "description": "**Start:** Beiboot im Nebel, beim Ankern, nahe Riff (Nebelbank). Leichtere Piratenszene als Aufwärmer.\n\n**Pirat (Bandit):** RK 12 · TP 11 · Bew 9 m · STR 11, GES 12, KON 12, INT 10, WEI 10, CHA 10\n• Entermesser/Säbel +3 — 1W6+1 Hieb · Leichte Armbrust/Wurfspeer +3 — 1W8+1 Stich\n**Enterhaken:** Werfen +3 vs RK 12 · Lösen Aktion (STR SG 10) · Kappen mit Klinge · Rüberklettern = Bewegung (Wellengang: Athletik SG 10)\n\n## Taktik\nFernkämpfer bleiben im Boot, Nahkämpfer entern.\n\n## Rückzug\nFlucht, wenn 2–3 Piraten besiegt sind.\n\n## Nicht-Kampf\nVerhandeln, Einschüchtern, Enterhaken kappen, Beiboot abdrängen. Piraten parlamentieren leichter mit einer berüchtigten Crew.\n\n## Belohnung\nBescheidenes Gold, Bergegut.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-beiboot-fern",
+          "name": "Pirat (Fernkämpfer)",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-beiboot-enterer",
+          "name": "Pirat (Enterer)",
+          "count": 3,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-sirenen",
+      "name": "Sirenenfelsen",
+      "description": "**Start:** Felseninsel, Klippe, Nebelbank, Wrackmast. Gesang lockt Schiffe auf die Felsen; die Matrosen sind befreibar (nicht zwingend tödlich spielen).\n\n**Harpyie/Sirene:** RK 11 · TP 38 · Bew 6 m, Fliegen 12 m · STR 12, GES 13, KON 12, INT 7, WEI 10, CHA 13 · Gemeinsprache\n• Mehrfachangriff: Klauen + Knüppel · Klauen +3 — 2W4+1 Hieb · Knüppel +3 — 1W4+1 Wucht\n• Lockender Gesang (90 m): WEI-RW SG 11, sonst bezaubert & bewegt sich zur Harpyie; Wurf-Wdh. bei Schaden/Zugende; Erfolg = 24 Std. immun\n**Verzauberter Matrose (Bandit):** RK 12 · TP 11 · Entermesser/Knüppel +3 — 1W6+1 · bei Ende des Gesangs verwirrt/gebrochen\n\n## Taktik\nHarpyie singt und bleibt erhöht/außer Reichweite; Matrosen blockieren Wege.\n\n## Rückzug\nHarpyie flieht fliegend bei unter 15 TP oder wenn der Gesang wirkungslos bleibt.\n\n## Nicht-Kampf\nOhren verstopfen, Matrosen befreien, Abstand, Verhandeln, Gesang unterbrechen.\n\n## Belohnung\nMünzen & ein Trinket aus dem Nest; befreite Matrosen (Perrin) als Verbündete.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-harpyie",
+          "name": "Harpyie (Sirene)",
+          "count": 1,
+          "maxHp": 38,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 38,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-matrose",
+          "name": "Verzauberter Matrose",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-untiefe",
+      "name": "Krabbenschwarm / Sahuagin-Späher (Untiefe)",
+      "description": "**Start:** Weite Sandbänke der östlichen Untiefe — Grundberührung ist eine echte Gefahr fürs Boot. Wahlweise ein größerer Klippenkrabben-Schwarm in den Tümpeln ODER erste Sahuagin-Späher als Vorboten des Riffs.\n\n**Riesenkrebs:** RK 15 · TP 13 · Schere +3 — 1W6+1 Wucht (packt, Entkommen SG 11)\n**Sahuagin:** RK 12 · TP 22 · Bew 9 m, Schwimmen 12 m · Blutraserei (Vorteil ggü. verletzten Zielen) · Biss/Klauen/Speer +3\n\n## Taktik\nKrabben: packen und festhalten. Sahuagin: aus dem Wasser, verwundete Ziele, wieder abtauchen.\n\n## Nicht-Kampf\nVorsichtig navigieren (Untiefe!), Futter, Abstand, über Wrackgut verhandeln.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-untiefe-krabbe",
+          "name": "Riesenkrebs",
+          "count": 6,
+          "maxHp": 13,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-untiefe-spaeher",
+          "name": "Sahuagin-Späher",
+          "count": 2,
+          "maxHp": 22,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-entertrupp",
+      "name": "Piraten-Entertrupp",
+      "description": "**Start:** Schiff an Schiff im Nebel nahe Riff (Anfahrt zum Wrack), Enterhaken am Geländer. Sechs Gegner — harter Kampf.\n\n**Bootsmann (Scout):** RK 13 · TP 16 · Bew 9 m · Naturk. +4, Wahrn. +5, Heiml. +6\n• Mehrfachangriff: 2 Nah- oder 2 Fernkampfangriffe · Kurzschwert/Entermesser +4 — 1W6+2 · Langbogen/Armbrust +4 — 1W8+2\n**Pirat (Bandit):** RK 12 · TP 11 · Entermesser/Säbel +3 — 1W6+1 · Leichte Armbrust/Wurfspeer +3 — 1W8+1\n**Enterhaken:** Werfen +3 vs RK 12 · Lösen Aktion (STR SG 10) · Kappen mit Klinge · Rüberklettern = Bewegung (Wellengang: Athletik SG 10)\n\n## Taktik\nBootsmann kommandiert, Fernkämpfer decken, Enterer klettern an Bord.\n\n## Rückzug\nFlucht, wenn der Bootsmann fällt oder 3 Piraten besiegt sind.\n\n## Nicht-Kampf\nEinschüchtern, Verhandeln, Enterhaken kappen, Beiboot beschädigen, Wind/Manöver nutzen.\n\n## Belohnung\nGold + **Salzzahn** (+1 Entermesser, beim Bootsmann).",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-entertrupp-boss",
+          "name": "Bootsmann",
+          "count": 1,
+          "maxHp": 16,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 16,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-entertrupp-fern",
+          "name": "Pirat (Fernkämpfer)",
+          "count": 2,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-entertrupp-enterer",
+          "name": "Pirat (Enterer)",
+          "count": 3,
+          "maxHp": 11,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 11,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-wrack",
+      "name": "Nasse Tote am Wrack",
+      "description": "**Start:** Wrack, Strand, nasser Laderaum, Gezeitenhöhle — das gestrandete Ölboot auf den Sandbänken am Riffrand.\n\n**Ghoul:** RK 12 · TP 22 · Bew 9 m · Dunkelsicht 18 m · Immun: Gift; Zustandsimmun: bezaubert, erschöpft, vergiftet\n• Biss +2 — 2W6+2 Stich · Klauen +4 — 2W4+2 Hieb; KON-RW SG 10 oder gelähmt (Elfen & Untote ausgenommen)\n**Zombie:** RK 8 · TP 22 · Bew 6 m · Hieb +3 — 1W6+1 Wucht\n• Untote Zähigkeit: bei 0 TP KON-RW SG 5+Schaden → bleibt bei 1 TP (nicht bei Strahlen/Krit)\n\n## Taktik\nZombies binden vorne, der Ghoul greift verwundete oder isolierte Ziele an.\n\n## Rückzug\nUntote fliehen nicht — endet durch Zerstörung, Bannung oder Flucht der Gruppe.\n\n## Nicht-Kampf\nHeiliges Symbol, Ruhe gewähren, Wrack meiden, Zielgegenstand schnell bergen.\n\n## Belohnung\nÖl-Ladung (Quest!), Sturmjahrgang (Wein), **Wellenbrecher** (+1 Schild), Bergegut.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-ghoul",
+          "name": "Ghoul",
+          "count": 1,
+          "maxHp": 22,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-wrack-zombie",
+          "name": "Zombie",
+          "count": 3,
+          "maxHp": 22,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-keller",
+      "name": "Die nassen Toten",
+      "description": "**Start:** Überfluteter Keller des Hafenfeuers (Osthafen) — hinter der verborgenen Tür, die der alte Wartturm-Schlüssel öffnet. Alternativ Strand bei Ebbe / altes Bootshaus am Friedhofsufer.\n\n**Zombie:** RK 8 · TP 22 · Bew 6 m · Hieb +3 — 1W6+1 Wucht · Untote Zähigkeit (KON-RW SG 5+Schaden)\n**Skelett:** RK 13 · TP 13 · Bew 9 m · Anfällig: Wucht · Immun: Gift\n• Kurzschwert +4 — 1W6+2 Stich · Kurzbogen +4 — 1W6+2 Stich (24/96 m)\n\n## Taktik\nZombies langsam nach vorne, Skelette schießen oder flankieren.\n\n## Rückzug\nUntote fliehen nicht — endet durch Zerstörung, Flucht oder Weihen/Schließen des Ortes.\n\n## Nicht-Kampf\nTür blockieren, heiliges Symbol/Ritual, Wrack verlassen, Knochen-/Anker-Siegel zerstören.\n\n## Belohnung\n**Sternenkompass** (Plot-Hook: zeigt auf einen verborgenen Ort) + alter Wärter-Cache (Gold).",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-keller-zombie",
+          "name": "Zombie",
+          "count": 3,
+          "maxHp": 22,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        },
+        {
+          "id": "bw1-en-skelett",
+          "name": "Skelett",
+          "count": 2,
+          "maxHp": 13,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 13,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-sahuagin",
+      "name": "Wasserwesen am Riff",
+      "description": "**Start:** Wrack, Riff, halb überflutete Höhle, Lagune — Nest am Riff.\n\n**Sahuagin:** RK 12 · TP 22 · Bew 9 m, Schwimmen 12 m · STR 13, GES 11, KON 12, INT 12, WEI 13, CHA 9 · Wahrn. +5, Dunkelsicht 36 m · Blutraserei (Vorteil ggü. verletzten Zielen) · begrenzte Amphibie · Hai-Telepathie\n• Mehrfachangriff: Biss + Klauen oder Biss + Speer\n• Biss +3 — 1W4+1 Stich · Klauen +3 — 1W4+1 Hieb · Speer +3 — 1W6+1 (zweihändig 1W8+1; geworfen 6/18 m)\n\n## Taktik\nAus dem Wasser angreifen, verwundete Ziele fokussieren, Speere werfen, wieder abtauchen.\n\n## Rückzug\nRückzug ins Wasser, wenn 1 Sahuagin fällt oder alle verwundet sind.\n\n## Nicht-Kampf\nEinschüchtern, Gebiet verlassen, Beute/Opfergabe, über Wrackgut verhandeln.\n\n## Belohnung\n**Mantarochen-Umhang** (Kapuze auf: Unterwasseratmung + Schwimmen 18 m) + Wrackgut/Gold.",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-sahuagin",
+          "name": "Sahuagin",
+          "count": 3,
+          "maxHp": 22,
+          "sharedInitiative": true,
+          "slots": [
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            },
+            {
+              "hp": 22,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-riffjaeger",
+      "name": "Riffjäger — Riesenoktopus",
+      "description": "**Start:** Unter Wrackteilen, im Riff, unter Steg, in Lagune/Grotte. Reißt Boote und Fischer unter Wasser — Kopfgeld in Klippendorf & Osthafen!\n\n**Riesenoktopus:** RK 11 · TP 52 · Bew 3 m, Schwimmen 18 m · STR 17, GES 13, KON 13, INT 4, WEI 10, CHA 4 · Wahrn. +4, Heiml. +5, Dunkelsicht 18 m · Unterwassertarnung · Wasseratmung, hält 1 Std. Luft an\n• Tentakel +5 — 2W6+3 Wucht (Reichw. 4,5 m); Ziel gepackt & festgesetzt (Entkommen SG 16)\n• Sonderaktion: Tintenwolke (nur unter Wasser) → Rückzug\n\n## Taktik\nAus dem Wasser greifen, Ziel packen, Richtung Tiefe/Deckung ziehen.\n\n## Rückzug\nRückzug in Tinte/Spalte bei unter 20 TP.\n\n## Nicht-Kampf\nFutter abwerfen, Abstand, Wrack umgehen, Feuer/Lärm, Beute zurücklassen.\n\n## Belohnung\nGroße Perle (wertvoll) + Münzen aus dem Nest. **Beweisstück fürs Kopfgeld: Schnabel und Tentakel mitnehmen!**",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-oktopus",
+          "name": "Riesenoktopus",
+          "count": 1,
+          "maxHp": 52,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 52,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bw1-enc-riese",
+      "name": "Grottenhüter — Junger Meeresriese",
+      "description": "**Start:** Grotte, Wrackteil, Riff — bewacht sein Revier an der Flussmündung (Flussgrotte). Der Zonen-Boss der Kampagne (HG 2).\n\n**Meeresriese (Oger, maritim):** RK 11 · TP 59 · Bew 12 m · STR 19, GES 8, KON 16, INT 5, WEI 7, CHA 7 · Groß, Riese · Dunkelsicht 18 m · Riesisch, gebrochen Gemeinsprache\n• Große Keule/Ankerstück +6 — 2W8+4 Wucht (Reichw. 1,5 m)\n• Wurfspeer/Felsbrocken +6 — 2W6+4 Stich/Wucht (9/36 m)\n\n**Aussehen:** graublaue Haut, Seetang im Haar, Muscheln an Schultern; Waffe = Ankerstück/Treibholzkeule. Spricht langsam, grob, kindlich-wütend.\n\n## Taktik\nTerritorial & hungrig. Zu leicht → nutzt Wurfgeschosse, Deckung, Engstellen. Zu schwer → brüllt, droht, verschwendet Runden mit Imponiergehabe.\n\n## Rückzug\nVerfolgt nur bis zum Grotteneingang.\n\n## Nicht-Kampf\nWill Futter, glänzende Dinge — oder eine feine Flasche Wein (Sturmjahrgang-Quest!) — oder dass man sein Revier verlässt. Verhandelbar!\n\n## Belohnung\nErlegen → **Ankerschlag** (+1 Kriegshammer, extra Schaden gegen Objekte & Strukturen) + Hort-Gold + Ankerstück (Kopfgeld-Beweis). Bestechung → glänzendes Fundstück + freie Durchfahrt (weniger Loot).",
+      "battlemapAssetIds": [],
+      "enemies": [
+        {
+          "id": "bw1-en-riese",
+          "name": "Meeresriese",
+          "count": 1,
+          "maxHp": 59,
+          "sharedInitiative": false,
+          "slots": [
+            {
+              "hp": 59,
+              "statusEffects": [],
+              "defeated": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "handouts": [
+    {
+      "id": "bw1-h-ort-01-moewenhafen",
+      "title": "1 · Möwenhafen — die Basis (Leicht)",
+      "body": "Kompakte Inselstadt mitten in der Bucht (Mitte der linken Karte), nur über Steg und Boot erreichbar. Enge Gassen, teerige Kais, Steinhäuser um den Hafenplatz, windschiefe Holzbuden auf Pfählen. Hier bekommt die Gruppe die linke Karte und alle Aufträge.\n\n## NSCs\n• Brenna Salzhand (Öl-Quest; das Öl lagert an den Wolfsklippen!)\n• Alrik Voss (versiegelter Brief → Ringklippe)\n• Hanne, Graue Möwe (Seemannsgarn, Wein-Aufhänger)\n• Corran, versoffener Lotse (Riff-Gerücht)\n• Zwielichtiger Kontakt (zu früh interessiert an „einer Kiste aus dem Osten\")\n\n## Gerüchte & Kurs\n• Öl-Auftrag → erst hoch zu den Wolfsklippen\n• Brief zur Ringklippe — dort sitzt „der Kartenmann\"\n• Erste Andeutungen zu allen vier Features + der „Sand\"-Haken\n\n## Encounter\n• Klippenkrabben (Einstieg) · Hafenratten & Straßenpack · Messertrupp am Kai (mit Kiste)\n\n**Nächster Kurs:** Wolfsklippen (Öl abholen).",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-02-wolfsklippen",
+      "title": "2 · Wolfsklippen & Öl-Depot (Leicht–Mittel)",
+      "body": "Nordwestliche Bucht, obere linke Ecke. Gezackte Steilküste mit schmalem Klippenpfad, Seevogelkolonien, Bachlauf mit kleiner Höhle, windschiefe Kiefern — der Wind heult durch die Felsen.\n\n## Der Twist\nAm gewohnten Lager ist das Öl alle — der Alte Wartturm (außer Betrieb, angeblich spukt es) ist noch randvoll. Seeweg: Anleger brauchbar, Verladekran kaputt, Treppe marode → zu riskant. **Landweg empfohlen:** freier Klippenpfad, oben steht ein zurückgelassener Karren für zwölf Fässer. Fässer nicht den Hang hinunterrollen!\n\nDer „Spuk\": nach Wahl bloße Atmosphäre — oder eine kleine echte Spukszene.\n\n## Personalisierter Haken\nOben im Turm: ein alter, salzverkrusteter **Schlüssel mit Wärter-Marke** (für schlüsselsammelnde Charaktere). Passt später auf die verborgene Tür im Leuchtturm-Keller (→ „Die nassen Toten\").\n\n## NSCs\n• Jarl, Fallensteller — warnt vor Rudel & Bär; Pfad frei, Karren steht\n\n## Encounter\n• Wölfe auf der Klippe (nachts) · Der hungrige Küstenbär (Höhle am Bach)\n\n**Nächster Kurs:** Vollen Karren nach Möwenhafen, dann per Boot Nordfeuer & Klippenfeuer.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-03-nordfeuer",
+      "title": "3 · Nordfeuer (Leicht)",
+      "body": "Einzelner Turm auf dem Felsinselchen oben Mitte der linken Karte — kurzer Sprung von den Wolfsklippen nach Nordosten. **Erste Öl-Lieferung.**\n\n## NSCs\n• Old Tibbs, Wärter — dankbar fürs Öl. Erzählt vom „Sand so weit das Auge reicht\" im Osten (Keim der Fehlleitung!). Warnt vor den Krabbenbänken.\n\n## Gerüchte & Kurs\n• „Östliche Bucht, endloser Sand\" → die Gruppe soll (noch) glauben, es sei auf ihrer Karte\n• Krabbenbänke, an denen Boote aufsetzen → deutet auf die Untiefe\n\n**Nächster Kurs:** Klippenfeuer (Öl 2).",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-04-klippenfeuer",
+      "title": "4 · Klippenfeuer (Mittel)",
+      "body": "Turm auf der unteren Westküste der linken Karte — auf dem Rückweg vom Nordfeuer. **Zweite Öl-Lieferung.**\n\n## NSCs\n• Maren Lichthüter, Wärterin — verweist auf „den Kartenmann an der Ringklippe\" (Alva); warnt: Überfahrt nach Osten kein Kinderspiel — Nebel und ein Riff.\n\n## Gerüchte & Kurs\n• Wer nach Osten will, sollte vorher zur Ringklippe — Alva kennt die Gewässer\n• Bestätigt Nebel- und Riff-Gerücht\n\n**Nächster Kurs:** Zurück nach Möwenhafen, dann Ringklippe.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-05-ringklippe",
+      "title": "5 · Ringklippe — der Tausch (Mittel)",
+      "body": "Ring-/Atoll-Inselchen unten links (linke Karte). Abgelegen, von Bäumen gesäumt — ein guter Ort für diskrete Geschäfte.\n\n## Wendepunkt: Prüfung 1 & die zweite Karte\n• Brief unversehrt → Alva gibt die schwarze Kiste, den zweiten Brief (für Marren) UND die östliche Seekarte\n• Siegel gebrochen → scheinbar leere Kiste; Alva bleibt freundlich und merkt sich, wer zuerst nach dem Inhalt fragt\n• Ab jetzt löst sich der Sand-Trick: „östliche Bucht\" = die ANDERE Bucht\n\n## NSCs\n• Alva Rauk, Kartograph & Hehler — warnt vor Riff und Nebelbank; hat Weinflaschen unter der Hand\n\n## Encounter\n• Optional: Messertrupp am Kai (falls noch nicht genutzt) — Hinterhalt beim Ablegen\n\n**Nächster Kurs:** Überfahrt nach Osten → Nebelbank.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-06-nebelbank",
+      "title": "6 · Nebelbank & Sirenenfels (Mittel)",
+      "body": "Offenes Wasser im Übergang zur östlichen Bucht. Nebelband und Sirenenfels werden aus Gerüchten selbst eingezeichnet. Ein Rudel Felsen liegt mitten im Grau.\n\n## NSCs\n• Perrin, geretteter Matrose — warnt (nach Befreiung) vor den „nassen Toten am Wrack\" und dem Riff dahinter\n\n## Gerüchte & Kurs\n• „Das Grau, das Schiffe schluckt\" und der Gesang auf den Felsen → einzeichnen\n• Hinter dem Nebel liegen Wrack und Riff — die gefährliche Zone\n\n## Encounter\n• Piraten-Beiboot (beim Ankern im Nebel) · Sirenenfelsen (Matrosen befreibar!)\n\n**Nächster Kurs:** Östliche Untiefe / Wrack.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-07-untiefe",
+      "title": "7 · Die östliche Untiefe — „Sand…\" (Mittel–Schwer)",
+      "body": "Die östliche Bucht (rechte Karte): weite Sandbänke, die Schiffe auflaufen lassen. Untiefe einzeichnen. Hier zahlt sich der Sand-Hinweis aus — **in Sichtweite liegt das gestrandete Ölboot.**\n\n## NSCs\n• Netz-Gwynn, gestrandete Bergerin — zeigt zum Wrack, erzählt von der Bergungsprämie in Osthafen, warnt vor Sahuagin\n\n## Gerüchte & Kurs\n• „Das, was im Sand liegt\" ist das vermisste Ölboot — dort wartet auch die Öl-Ladung\n• In Osthafen gibt es eine Bergungsprämie für das Boot\n\n## Encounter\n• Krabbenschwarm / Sahuagin-Späher — Grundberührung ist echte Gefahr fürs Boot\n\n**Nächster Kurs:** Das Wrack, dann Osthafen.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-08-wrack",
+      "title": "8 · Das Wrack (Schwer)",
+      "body": "Auf den Sandbänken am Rand des Riffs (rechte Karte, Mitte). Wrack einzeichnen. Es ist das vermisste Ölboot — halb gesunken, nasser Laderaum, vom Riff aufgerissen.\n\n## Wein-Payoff\nIm Laderaum lagern neben dem Öl versiegelte Weinfässer — darunter der echte **Sturmjahrgang**.\n\n## Beute & Plot\nÖl-Ladung (Öl-Quest!), Sturmjahrgang (Wein), Hinweise zu Kiste und Osthafen, Bergungsgut für die Prämie.\n\n## Encounter\n• Piraten-Entertrupp (auf der Anfahrt, Schiff-an-Schiff im Nebel) · Nasse Tote am Wrack (Laderaum & Deck)\n\n**Nächster Kurs:** Das Riff / Osthafen.",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-09-riff",
+      "title": "9 · Das Riff (Schwer)",
+      "body": "Rechte Karte, offenes Wasser rechts unten: ein Unterwasser-Riff, das Schiffe seit Jahren verschlingt. Riff einzeichnen. Nahebei liegt **Klippendorf**, das Fischerdorf auf der Felsnase oben rechts.\n\n## NSCs\n• Klippendorf-Fischer (Älteste Nesa Reet) — verlieren Boote an den Riffjäger; Kopfgeld!\n\n## Gerüchte & Kurs\n• Der Riesenoktopus macht das Riff unsicher — für seinen Kopf zahlen Klippendorf und Osthafen\n• Schnabel und Tentakel als Beweisstück mitnehmen, auch ohne den Auftrag\n\n## Encounter\n• Wasserwesen — Sahuagin (Nest am Riff) · Riffjäger — Riesenoktopus (TP 52, Lagune/Grotte)\n\n**Nächster Kurs:** Flussgrotte (das Revier des Riesen).",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-10-flussgrotte",
+      "title": "10 · Flussgrotte — der Meeresriese (Schwer)",
+      "body": "Am rechten Ufer der östlichen Bucht führt ein Fluss in einen verdächtigen Bergteil. Dahinter liegt, halb geflutet, die Grotte des jungen Meeresriesen — man watet nassen Fußes hinein. **Der Zonen-Boss der Kampagne.**\n\n## Gerüchte & Kurs\n• Kopfgeld: Reeder Haldric zahlt, wenn das Fahrwasser wieder sicher ist — Erlegen ODER Bestechung\n• Beim Erlegen das Ankerstück als Trophäe mitnehmen; bei Bestechung gibt der Riese ein glänzendes Fundstück\n\n## Encounter\n• Grottenhüter — Junger Meeresriese (TP 59, HG 2) — verhandelbar: Futter, glänzende Dinge, eine feine Flasche Wein\n\n**Nächster Kurs:** Osthafen (Abschluss).",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-ort-11-osthafen",
+      "title": "11 · Osthafen — Hafenfeuer & Ziel (Abschluss)",
+      "body": "Große Hafenstadt unten rechts (rechte Karte) mit eigenem Leuchtturm (Hafenfeuer), Friedhof am Wasser und alter Werft. Ziel der Kiste, der dritten Öl-Lieferung — und Ort der Schiffsübergabe.\n\n## Prüfung 2 & Abschluss\nMarren Voss nimmt die schwarze Kiste an der alten Werft entgegen, prüft Siegel und Scharniere, öffnet sie vor der Crew: leere Plakette, Messingnägel, der zweite Brief — **die Übergabe der Morgenwind.** Dann Balliste, Sturmsegel, Nebellaterne, Kartenkasten und die Taufe.\n\n## NSCs\n• Marren Voss, Werftmeister (Kiste, Schiffsübergabe)\n• Doran Kettel, Hafenmeister (Bergungsprämie, Öl-Zahlung, Riffjäger-Kopfgeld, Import-Wein)\n• Reeder Haldric (Grottenhüter-Kopfgeld, freie Durchfahrt)\n\n## Encounter\n• Die nassen Toten — im überfluteten Keller des Hafenfeuers, hinter der verborgenen Tür (Wartturm-Schlüssel!)",
+      "category": "Orte",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-kurs",
+      "title": "Kurs auf einen Blick",
+      "body": "Reihenfolge als Vorschlag, kein Zwang — die NSCs halten die Gruppe sanft auf Kurs.\n\n• **1 Möwenhafen** (Leicht) — Krabben, Hafenratten, Messertrupp → Wolfsklippen\n• **2 Wolfsklippen + Öl-Depot** (Leicht–Mittel) — Wölfe, Küstenbär → Nordfeuer & Klippenfeuer\n• **3 Nordfeuer** (Leicht) — Öl-Lieferung 1 → Klippenfeuer\n• **4 Klippenfeuer** (Mittel) — Öl-Lieferung 2 → Möwenhafen → Ringklippe\n• **5 Ringklippe** (Mittel) — sozial; optional Messertrupp → Osten, Nebelbank\n• **6 Nebelbank & Sirenenfels** (Mittel) — Piraten-Beiboot, Sirenen → Wrack/Untiefe\n• **7 Östliche Untiefe** (Mittel–Schwer) — Krabbenschwarm/Sahuagin-Späher → Wrack/Osthafen\n• **8 Das Wrack** (Schwer) — Entertrupp, Nasse Tote → Riff/Osthafen\n• **9 Das Riff** (Schwer) — Sahuagin, Riffjäger → Flussgrotte\n• **10 Flussgrotte** (Schwer) — Grottenhüter (HG 2) → Osthafen\n• **11 Osthafen** (Abschluss) — Die nassen Toten; Kiste, Öl 3, Schiffsübergabe",
+      "category": "Kampagne",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-karten-regel",
+      "title": "Karten-Regel & der Sand-Trick",
+      "body": "## Karten-Regel\n• Die linke Karte bekommt die Gruppe gleich in Möwenhafen; die rechte erst bei der Ringklippe\n• Die vier versteckten Features (Untiefe, Nebelbank, Riff, Wrack) sind NICHT vorgezeichnet — die Gruppe zeichnet sie selbst ein, sobald sie genug Gerüchte gesammelt hat (zwei unabhängige Hinweise → einzeichnen)\n\n## Der „Sand\"-Trick (Fehlleitung)\n„In der östlichen Bucht — Sand so weit das Auge reicht. Da soll etwas liegen.\"\n• Mit nur der linken Karte deutet „östlich\" auf den rechten Kartenrand (Felseninsel/Seenaht) — dort ist nur die kleine Gezeitenzone\n• Erst mit der zweiten Karte fällt der Groschen: gemeint ist die ganz andere, östliche Bucht mit den riesigen Untiefen beim Riff\n• „Das, was da liegt\" ist das gestrandete Ölboot (das Wrack) samt Bergungsgut — die Belohnung fürs gelöste Rätsel",
+      "category": "Kampagne",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-geruechte",
+      "title": "Gerüchte-Schnellübersicht",
+      "body": "Wenn die Spieler sich umhören, gib das passende Gerücht. Zwei unabhängige Hinweise auf ein Feature → sie dürfen es einzeichnen.\n\n• **Krabbenbänke, an denen Boote aufsetzen** (Fischer, Brenna, Old Tibbs) → Untiefe (Osten), nach 2 Hinweisen\n• **Das Grau, das Schiffe schluckt; Gesang** (Hanne, Perrin) → Nebelbank/Sirenenfels, nach 2 Hinweisen\n• **Ein Riff, das keiner mehr befährt** (Corran, Alva, Maren) → Riff, mit östl. Karte + Hinweis\n• **Das vermisste Ölboot; Bergungsprämie** (Brenna, Netz-Gwynn, Doran) → Wrack, am Fundort\n• **Sand so weit das Auge reicht** (Old Tibbs, Matrosen) → Untiefe (Osten) — Trick! Mit östl. Karte\n• **Der beste Tropfen ging im Osten unter** (Hanne, Sammler) → Wein → Wrack (Sturmjahrgang)\n• **Ein vielarmiges Ungeheuer reißt Boote unter** (Klippendorf, Perrin) → Kopfgeld Riffjäger\n• **Ein Riese hält die Flussmündung** (Haldric, Netz-Gwynn) → Kopfgeld Grottenhüter",
+      "category": "Kampagne",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-belohnungen",
+      "title": "Belohnungen & magische Gegenstände",
+      "body": "Dichte bewusst mittel — harte Begegnungen im Osten geben verlässlich etwas. Goldwerte = Richtwerte Stufe 4–5.\n\n## Feste Belohnungen\n• Klippenkrabben → Krebsfleisch, Silber\n• Hafenratten → kleine Börse, Diebesgut, Hinweis (Schmuggler/Kiste)\n• Messertrupp → Schmuggler-Börse, Schmuggelware, Hinweis zur Kiste\n• Wölfe → Felle · Küstenbär → Bärenfell + Münz-Cache\n• Piraten-Beiboot → Gold, Bergegut\n• Sirenenfelsen → Münzen, Trinket; Perrin als Verbündeter\n• Piraten-Entertrupp → Gold + **Salzzahn** (+1 Entermesser)\n• Nasse Tote am Wrack → Öl-Ladung, Sturmjahrgang, **Wellenbrecher** (+1 Schild)\n• Die nassen Toten → **Sternenkompass** (Plot-Hook) + Wärter-Cache\n• Sahuagin → **Mantarochen-Umhang** + Wrackgut\n• Riffjäger → große Perle + Münzen\n• Grottenhüter → Erlegen: **Ankerschlag** (+1 Kriegshammer) + Hort; Bestechung: Fundstück + Durchfahrt\n\n## Magische Gegenstände\n• **Mantarochen-Umhang** (ungewöhnlich): Kapuze auf → Unterwasseratmung + Schwimmen 18 m. Kein Kampfwert — Gold für Erkundung & kreative Lösungen\n• **Salzzahn** (ungewöhnlich): +1 Entermesser/Kurzschwert\n• **Wellenbrecher** (ungewöhnlich): +1 Schild (alter Wrackschild)\n• **Sternenkompass** (ungewöhnlich): zeigt nicht nach Norden, sondern auf einen verborgenen Ort — reiner Plot-Hook\n• **Ankerschlag** (selten): +1 Kriegshammer, extra Schaden gegen Objekte & Strukturen (Türen, Rümpfe)\n\n## Frei verteilbarer Pool\nKleines Gold · Schiffskram (Reparatur-Kits, Ersatzsegel, Öl-Reserve, Laterne, Proviant) · 2–3 Heiltränke, Sturmwein-Boon, „Seebrise\" (einmal Vorteil gg. Furcht/Seekrankheit) · Felle, Perle, Schmuggelware · Kartenfragmente als Hooks",
+      "category": "Kampagne",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-vorlesetext-brenna",
+      "title": "Vorlesetext: Brennas Wegbeschreibung",
+      "body": "Zwölf Fässer Leuchtfeueröl, drei Türme. Das Öl holt ihr an den Wolfsklippen — jedenfalls war das der Plan. Vor Ort werdet ihr hören: am üblichen Platz ist nichts mehr. Aber der Alte Wartturm, längst außer Betrieb, ist noch voll davon.\n\nNeulich war einer oben — und ist Hals über Kopf abgehauen, weil es angeblich im Turm spukt. Alter Schisser, wenn ihr mich fragt.\n\nÜbers Wasser ginge es, aber ich würd's meiden. Der Anleger ist noch brauchbar, doch der Aufstieg ist steil, und den Treppen ist nicht mehr zu trauen.\n\nDie gute Nachricht: Der Pfad oben an der Steilküste ist nicht zugewachsen. Der Kerl hat seinen Karren bis dort hochgezogen — und stehen lassen, als er das Weite suchte. Zwölf Fässer passen locker drauf.\n\nUnd versucht bloß nicht, die Dinger den Hang runterzurollen. Die Fässer sind alt.\n\nMein Rat: Nehmt den Landweg hin, ladet den Karren voll, bringt ihn hierher — dann fahrt ihr mit eurem Boot weiter und bestückt die Feuer.",
+      "category": "Kampagne",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-brief-alva",
+      "title": "Handout: Der erste Brief (an Alva)",
+      "body": "Blaues Wachssiegel mit Wellensymbol.\n\nAlva,\n\nerreicht dich dieser Brief mit unversehrtem Siegel, so hat die neue Crew der Morgenwind ihre erste Prüfung bestanden. Übergib ihnen die schwarze Kiste für Marren Voss und lege den zweiten Brief hinein.\n\nIst das Siegel gebrochen, gib ihnen die leere Kiste. Sei freundlich. Lächle. Und merk dir gut, wer zuerst nach dem Inhalt fragt.\n\nDie See zeigt jedem irgendwann, wie viel er wirklich wert ist.\n\n— R.",
+      "category": "Briefe & Prüfung",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-brief-marren",
+      "title": "Handout: Der zweite Brief (an Marren)",
+      "body": "Liegt in der schwarzen Kiste — eigentlich nicht für die Crew bestimmt.\n\nMarren,\n\nerreicht dich die Kiste verschlossen, hat die Crew der Morgenwind bestanden. Sie hielten Kurs, ohne die Siegel zu brechen.\n\nÖffne sie vor ihnen. Die Plakette ist leer — der Name will verdient sein; die Nägel erst, wenn die Crew gewählt hat. Übergib, was bereitliegt: keine Belohnung, sondern Verantwortung.\n\nLiest dies nicht Marren: ihr habt geöffnet. Besorgt euch eine schwarze Flagge — wer mit fremdem Erbe kommt, nenne sich ehrlich Pirat.\n\n— R.",
+      "category": "Briefe & Prüfung",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-pruefung",
+      "title": "Die Prüfung: Brief, Kiste & die Morgenwind",
+      "body": "Die zweite Hauptlinie ist eine Prüfung der Crew — getarnt als harmloser Botengang. Am Ende gehört ihnen ihr Schiff.\n\n## Aufbau\n• Die Gruppe ist die neue Crew der Morgenwind; der Erste Maat führt als amtierender Kapitän (NSC oder Spielercharakter)\n• Alrik Voss (Agent des Gönners „R.\") übergibt Öl-Auftrag und beiläufig den versiegelten Brief für Alva\n• Ab hier liegt es an der Gruppe: ehrlich überbringen — oder öffnen, fälschen, an sich nehmen. Genau das ist der Test\n\n## Was in der schwarzen Kiste steckt\nKein Gold: eine leere Schiffsplakette aus dunklem Holz, ein paar alte Messingnägel und der zweite Brief. Die Kiste ist die Übergabe des Schiffs.\n\n## Belohnung\nDie Morgenwind + kleine Balliste, Sturmsegel, Nebellaterne, Kartenkasten. Taufe: Name behalten oder neu — „Ein Name wird nicht gemalt, er wird eingeschlagen.\"\n\n## Verdient oder gestohlen — das merkt sich die See\n• Siegel & Kiste unberührt → volle, warme Übergabe\n• Geöffnet, aber ehrlich zugegeben → Marren prüft hart, Chance zur Wiedergutmachung (z. B. erst Riff/dritten Turm meistern)\n• Geöffnet, gelogen oder gestohlen → Schiff & Ausrüstung als Diebesgut + Piraten-Ruf\n• Folgen: Piraten parlamentieren leichter („eine von uns\"); Osthafen wird kühler (schlechtere Kopfgelder/Handel). Sirenen, Untote und den Riesen kümmert es nicht",
+      "category": "Briefe & Prüfung",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-schluessel",
+      "title": "Haken: Der alte Schlüssel",
+      "body": "• Oben im Alten Wartturm findet die Gruppe — besonders ein schlüsselsammelnder Charakter — einen alten, salzverkrusteten Schlüssel mit Wärter-Marke. Wirkt wie Krimskrams, ist es aber nicht\n• Später an einem Leuchtturm durchblicken lassen, dass es dort eine verborgene Tür gibt. Überraschung: Der Schlüssel passt\n• Dahinter, im überfluteten Keller, wartet der Skelett-Encounter „Die nassen Toten\". Standard: Keller des Hafenfeuers in Osthafen (Friedhofsnähe); alternativ das Klippenfeuer für eine frühere Auflösung\n• Rein optional, an den Kämpfer-Steckbrief angedockt („sammelt alte Schlüssel\"). Timing des Winks liegt bei dir",
+      "category": "Briefe & Prüfung",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-schiff-grundsatz",
+      "title": "Schiffsprüfungen: Grundsatz & Auswertung",
+      "body": "Einmal lernen, später nur bei Druck wieder würfeln.\n\n## Grundsatz\nEinmal geschafft = gelernt. Danach im Normalbetrieb keine Probe. **Wieder würfeln bei:** Sturm/Nebel/Nacht · Kampf oder Zeitdruck · Schaden am Schiff · unbekanntem Gewässer · besonders riskanter Idee.\n\n## Fehlschlag\nNicht sofort hart bestrafen — Drama erzeugen: Zeitverlust · Kursabweichung · kleiner Schaden · jemand gerät in Gefahr · Notfallprüfung wird ausgelöst.\n\n## Mini-Auswertung am Tisch\n• **passend/kreativ** → Vorteil, SG senken oder bessere Position (Zeitgewinn, Gefahr früh erkannt, Respekt der Crew)\n• **solide** → normal würfeln (Problem gelöst oder kleine Kosten)\n• **riskant/halb passend** → kann klappen, Fehlschlag tut mehr weh (Kursabweichung, Schaden, Notfallprüfung)\n• **ignoriert/keine Reaktion** → automatische Komplikation oder Nachteil (Zeitverlust, Gefahr, Begegnung)",
+      "category": "Schiffsprüfungen",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-schiff-grund",
+      "title": "Schiffsprüfungen: Grundprüfungen (1–7)",
+      "body": "## 1 Leinen los\nHafen, Kai, Poller. „Leinen los heißt nicht: alles fallen lassen. Lösen, einholen, klarieren!\"\n• Festmacher lösen: Geschick/Athletik · Leinen einholen: Stärke/Athletik · Leinen klarieren: Geschick/Wasserfahrzeuge · Schiff vom Steg halten: Stärke/Geschick\n\n## 2 Segel setzen / reffen\n„Nicht gegen das Segel kämpfen. Mit dem Wind arbeiten!\"\n• Mast/Segel: Akrobatik oder Athletik · Leinen: Athletik · Koordination: Wahrnehmung, Überleben oder Wasserfahrzeuge\n\n## 3 Raus aus dem Hafen\n„Langsam ist sauber. Sauber ist schnell.\"\n• Steuer: Wasserfahrzeuge/Geschick · Bugwache: Wahrnehmung · Leinen/Bootshaken: Athletik/Geschick\n\n## 4 Ausguck\n„Wer zuerst sieht, lebt länger.\"\n• Gefahr erkennen: Wahrnehmung · Wetter deuten: Natur/Überleben · Riff/Strömung: Überleben/Wasserfahrzeuge · fremde Segel: Wahrnehmung/Einsicht\n\n## 5 Navigation\n„Das Meer schreibt mit unsichtbarer Tinte.\"\n• Karte: Intelligenz/Geschichte/Wasserfahrzeuge · Sonne/Sterne/Wind: Überleben · Wetter/Vögel/Strömung: Natur · Magie: Arkana\n\n## 6 Anker werfen / aufholen\n„Ein Anker ist kein Stein an einer Kette. Der muss halten.\"\n• Aufholen: Stärke/Athletik · richtig setzen: Wasserfahrzeuge/Überleben · Tiefe/Grund: Wahrnehmung/Natur/Überleben · zweite Person hilft mit Vorteil\n\n## 7 Sicher ankommen\n„Nicht den Steg fangen. Das Schiff soll neben den Steg.\"\n• Steuer: Wasserfahrzeuge/Geschick · Leinen: Athletik/Geschick · Ansage: Wahrnehmung/Überleben",
+      "category": "Schiffsprüfungen",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-schiff-notfall",
+      "title": "Schiffsprüfungen: Notfallprüfungen",
+      "body": "Nur einsetzen, wenn eine Reisekarte, ein Fehlschlag oder eine dramatische Szene es auslöst.\n\n## Reparatur\nGerissenes Tau, Segelriss, Rumpfschramme. „Nicht schön machen. Haltbar machen.\"\n• Segel flicken: Fingerfertigkeit/Handwerk · Tauwerk ersetzen: Geschick/Athletik · Rumpf abdichten: Handwerk/Stärke · Schaden analysieren: Wahrnehmung/Untersuchung\n\n## Leck\nWasser im Bauch, Eimerkette, Panik unter Deck. „Einer stopft, einer schöpft, einer hört auf zu schreien!\"\n• Abdichten: Handwerk/Stärke · Schöpfen: Athletik/Konstitution · Koordinieren: Überleben/Einschüchtern/Überreden\n\n## Sturm sichern\n„Segel runter, Ladung fest, Köpfe einziehen!\"\n• Ladung sichern: Athletik/Geschick · Deck räumen: Wahrnehmung/Handwerk · Crew sichern: Überleben/Athletik · Wetter einschätzen: Natur/Überleben\n\n## Mann über Bord\n„Augen auf ihn! Wer ihn aus den Augen verliert, verliert ihn ganz.\"\n• im Blick behalten: Wahrnehmung · Rettungsleine werfen: Geschick/Athletik · Schiff beidrehen: Wasserfahrzeuge/Navigation · herausziehen: Stärke/Athletik\n\n## Verfolgung\nPiraten, dunkle Segel, mehr Fahrt. „Mehr Tuch, besserer Kurs — oder bessere Gebete.\"\n• Segel: Akrobatik/Athletik · Kurs: Navigation/Überleben · Täuschung: Täuschung/Wasserfahrzeuge · Ballast/Ladung: Stärke/Gruppenentscheidung\n\n## Nebel\n„Im Nebel fährt man nicht mit den Augen. Man fährt mit Ohren, Händen und Nerven.\"\n• Lauschen: Wahrnehmung · langsam steuern: Wasserfahrzeuge/Geschick · Tiefe prüfen: Überleben/Handwerk · magische Störung: Arkana/Religion",
+      "category": "Schiffsprüfungen",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-cheat-grund",
+      "title": "Cheat: Grundmechanik & SG",
+      "body": "## Kürzel\n• **SG/DC** Schwierigkeitsgrad · **RK/AC** Rüstungsklasse · **THP** temporäre TP (zuerst verbraucht) · **RW/Save** Rettungswurf · **PB** Übungsbonus\n• **Vorteil:** 2× d20, besseres Ergebnis · **Nachteil:** 2× d20, schlechteres\n\n## Formeln\n• **Probe:** d20 + Attribut + ggf. PB gegen SG\n• **Angriff:** d20 + Angriffsbonus gegen RK; bei Treffer Schaden würfeln\n• **RW:** d20 + Attributsmod + ggf. PB gegen SG\n• **Zauber-SG:** 8 + PB + Zauberattribut · **Zauberangriff:** d20 + PB + Zauberattribut\n\n## Typische SG\n• **5** sehr leicht (fast nur bei Stress) · **10** leicht · **15** mittel, echte Herausforderung · **20** schwer (Talent/Glück) · **25+** fast unmöglich",
+      "category": "Cheat-Sheet",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-cheat-kampf",
+      "title": "Cheat: Kampfablauf & Aktionen",
+      "body": "## Reihenfolge\n• 1 Überraschung klären (Überraschte handeln in Runde 1 nicht)\n• 2 Initiative (höchste zuerst) · 3 Zug: Bewegung + Aktion + ggf. Bonusaktion, frei kombinierbar\n• 4 Reaktionen: 1 pro Runde, zurück zu Beginn des eigenen Zuges · 5 Rundenende → neue Runde\n\n## Ressourcen im Zug\n• **Aktion:** Angriff, Zauber, Spurt, Rückzug, Ausweichen, Helfen, Verstecken, Vorbereiten\n• **Bewegung:** teilbar vor/nach/zwischen Angriffen; Aufstehen kostet halbe Bewegung\n• **Bonusaktion:** nur wenn ausdrücklich erlaubt · **Freie Interaktion:** Waffe ziehen, Tür öffnen · **Reaktion:** Gelegenheitsangriff, Schild-Zauber\n\n## Häufige Aktionen\n• **Spurt:** zusätzliche Bewegung · **Rückzug:** keine Gelegenheitsangriffe · **Ausweichen:** Angriffe gegen dich mit Nachteil, GES-RW mit Vorteil\n• **Helfen:** Verbündeter erhält Vorteil · **Verstecken:** Heimlichkeit gegen passive Wahrnehmung · **Vorbereiten:** Auslöser + Handlung; Ausführung kostet Reaktion\n\n## Bewegung Spezial\n• Schwieriges Gelände/Klettern/Schwimmen: doppelte Kosten · Gelegenheitsangriff: wenn Ziel freiwillig Nahkampfreichweite verlässt (nicht bei Teleport/erzwungen)",
+      "category": "Cheat-Sheet",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-cheat-tod",
+      "title": "Cheat: Tod, Zustände & Konzentration",
+      "body": "## Tod & Stabilisieren (bei 0 TP)\nBewusstlos, liegend. Zu Zugbeginn Todesrettungswurf: 10+ Erfolg, 1–9 Fehlschlag, Nat 20 = 1 TP & wach, Nat 1 = 2 Fehlschläge. 3 Erfolge → stabil; 3 Fehlschläge → tot. Heilung beendet alles. Schaden bei 0 TP = 1 Fehlschlag (Krit 2; Nahkampf aus 1,5 m meist Krit). Stabil ohne Heilung: nach 1W4 Std. 1 TP.\n\n## Zustände (Kurzfassung)\n• **Blind:** eigene Angriffe Nachteil, gegen dich Vorteil · **Bezaubert:** kann Bezauberer nicht angreifen\n• **Verängstigt:** Nachteil solange Quelle sichtbar, nicht näher · **Gepackt:** Bewegung 0 · **Handlungsunfähig:** keine Aktionen/Reaktionen\n• **Unsichtbar:** Angriffe gegen dich Nachteil, eigene Vorteil · **Gelähmt/Betäubt:** handlungsunfähig, Treffer aus 1,5 m kritisch (gelähmt)\n• **Vergiftet:** Nachteil auf Angriffe & Proben · **Liegend:** Nahkampf gegen dich Vorteil, Fernkampf Nachteil\n• **Festgesetzt:** Bewegung 0, gegen dich Vorteil, eigene Nachteil · **Bewusstlos:** handlungsunfähig, liegend, Treffer aus 1,5 m kritisch\n\n## Konzentration\nNur ein Konzentrationszauber. Endet freiwillig, bei anderem Konz.-Zauber, Bewusstlosigkeit oder verpatztem KON-RW. **Bei Schaden:** KON-RW gegen SG 10 oder halber Schaden — was höher ist.\n\n## Resistenz / Immunität / Verwundbarkeit\nHalber / kein / doppelter Schaden (nach Modifikatoren; abrunden).",
+      "category": "Cheat-Sheet",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-cheat-schaden",
+      "title": "Cheat: Schadenarten",
+      "body": "Offiziell nicht automatisch besser/schlechter — relevant bei Resistenz/Immunität/Verwundbarkeit. Hinweise fürs Improvisieren:\n\n## Physisch\n• **Hieb:** Schwerter, Äxte, Klauen — gut gegen Seile, Netze; schwach gegen harte Panzer\n• **Stich:** Pfeile, Speere, Bisse — gut gegen weiche Ziele; unpraktisch gegen Skelette, Schleime\n• **Wucht:** Keulen, Sturz — stark gegen Knochen, Skelette, sprödes Material, Türen\n\n## Elementar & Magie\n• **Feuer:** gut gegen trockenes Holz, Öl, Regeneration · **Kälte:** Verlangsamung; schlecht gg. Eiswesen/Untote\n• **Blitz:** passt bei Metall/Wasser · **Donner:** Schall/Druckwelle — Glas, instabile Strukturen, laut!\n• **Säure:** Metall, Rüstungsteile · **Gift:** häufig schlecht gg. Untote/Konstrukte — viele immun\n• **Nekrotisch:** Lebensentzug; Untote oft resistent · **Strahlend:** stark gg. Untote/Fiends; stoppt manche Regeneration\n• **Psychisch:** schlecht gg. geistlose Wesen · **Macht/Force:** sehr selten resistiert\n• Sonderworte: „Heilig\" ≈ Strahlend, „Dunkel\" ≈ Nekrotisch",
+      "category": "Cheat-Sheet",
+      "expanded": false
+    },
+    {
+      "id": "bw1-h-cheat-sl",
+      "title": "Cheat: Deckung, Sicht & SL-Faustregeln",
+      "body": "## Deckung & Sicht\n• **Halbe Deckung:** +2 RK & GES-RW · **Dreiviertel:** +5 · **Volle:** nicht anvisierbar\n• **Dämmerlicht:** Nachteil auf Sicht-Wahrnehmung · **Dunkelheit:** effektiv blind · **Dunkelsicht:** Dunkelheit wie Dämmerlicht, keine Farben\n\n## SL-Faustregeln\n• **Unklar?** Passende Probe SG 10–15; nur würfeln, wenn Scheitern interessant ist\n• **Gute Idee** → Vorteil oder SG senken · **Schlechte Umstände** → Nachteil oder SG erhöhen\n• **Kampf zu leicht** → Verstärkung, Gelände, neues Ziel, Timer · **zu schwer** → Gegner flieht, macht Fehler, verhandelt\n• **Impro-Gegner:** Angriff +4 bis +6; Schaden 1W6–2W6\n• **Schaden:** klein 1W4/1W6 · mittel 1W8/2W6 · stark 2W8/3W6\n\n## Maritime Proben\n• Anker hochziehen: Stärke/Athletik · Tau festmachen: GES oder STR · Segel setzen: Akrobatik/Athletik\n• Kurs halten: Überleben/Wasserfahrzeuge · Sturm erkennen: Wahrnehmung/Überleben · Untiefe erkennen: Wahrnehmung\n• Reparatur: Werkzeuge/GES/INT · Crew beruhigen: Charisma/Überzeugen · Enterhaken: STR oder GES\n• Nasses Deck: GES-RW SG 10–13 gegen Ausrutschen",
+      "category": "Cheat-Sheet",
+      "expanded": false
+    }
+  ],
+  "decks": [
+    {
+      "id": "bw1-deck-gute-see",
+      "name": "Gute See",
+      "color": "#2e8b6a",
+      "cards": [
+        {
+          "id": "bw1-card-gs1",
+          "title": "Rückenwind",
+          "body": "Der Wind steht günstig und trägt euch sauber voran.\n\n**Frage:** Was macht ihr mit dem Vorteil?\n\n**Prüfungen:** Segel · Navigation\n\n**Folgen:** Zeitgewinn, Bonus, Übermut"
+        },
+        {
+          "id": "bw1-card-gs2",
+          "title": "Klare Sicht",
+          "body": "Horizont, Landmarken und Wetterzeichen liegen offen vor euch.\n\n**Frage:** Nutzt ihr die Übersicht?\n\n**Prüfungen:** Ausguck · Navigation\n\n**Folgen:** Kursbonus, Gefahr früh erkannt"
+        },
+        {
+          "id": "bw1-card-gs3",
+          "title": "Ruhige See",
+          "body": "Kaum Wellengang, das Schiff liegt ruhig und berechenbar im Wasser.\n\n**Frage:** Wofür nutzt ihr die Ruhe?\n\n**Prüfungen:** Reparatur · Ausguck · Vorräte\n\n**Folgen:** Vorbereitung, Training, kleine Vorteile"
+        },
+        {
+          "id": "bw1-card-gs4",
+          "title": "Günstige Strömung",
+          "body": "Die See schiebt euch in die richtige Richtung.\n\n**Frage:** Nutzt ihr die Strömung aus?\n\n**Prüfungen:** Navigation\n\n**Folgen:** Zeitgewinn, Abdrift bei Fehlgriff"
+        },
+        {
+          "id": "bw1-card-gs5",
+          "title": "Freundliche Segel",
+          "body": "Ein Händler oder Fischer kreuzt euren Weg und wirkt friedlich.\n\n**Frage:** Geht ihr in Kontakt?\n\n**Prüfungen:** Ausguck · Sozial · Navigation\n\n**Folgen:** Gerüchte, Handel, Warnungen"
+        },
+        {
+          "id": "bw1-card-gs6",
+          "title": "Treibgut voraus",
+          "body": "Kisten, Holz oder Stoff treiben in Reichweite vorbei.\n\n**Frage:** Bergt ihr etwas davon?\n\n**Prüfungen:** Ausguck · Manöver · Geschick\n\n**Folgen:** Beute, Hinweis, Bergungsrisiko"
+        },
+        {
+          "id": "bw1-card-gs7",
+          "title": "Vogelschwarm",
+          "body": "Ein Vogelschwarm kreist auffällig über einer Richtung.\n\n**Frage:** Folgt ihr dem Zeichen?\n\n**Prüfungen:** Ausguck · Natur · Navigation\n\n**Folgen:** Land, Fisch, Strömung, Abkürzung"
+        },
+        {
+          "id": "bw1-card-gs8",
+          "title": "Sternklare Nacht",
+          "body": "Der Himmel ist klar — beste Bedingungen für Nachtfahrt und Orientierung.\n\n**Frage:** Haltet ihr Kurs durch die Nacht?\n\n**Prüfungen:** Navigation · Ausguck\n\n**Folgen:** Kursbonus, ruhige Wache"
+        }
+      ]
+    },
+    {
+      "id": "bw1-deck-unruhige-see",
+      "name": "Unruhige See",
+      "color": "#b07d2e",
+      "cards": [
+        {
+          "id": "bw1-card-us1",
+          "title": "Schwankender Wind",
+          "body": "Der Wind dreht ständig und macht sauberes Segeln mühsam.\n\n**Frage:** Wie reagiert ihr auf den Wechsel?\n\n**Prüfungen:** Segel\n\n**Folgen:** Zeitverlust oder sauberer Segelbonus"
+        },
+        {
+          "id": "bw1-card-us2",
+          "title": "Flaute",
+          "body": "Die Segel hängen schlaff, das Schiff kommt kaum voran.\n\n**Frage:** Wartet ihr oder werdet ihr kreativ?\n\n**Prüfungen:** Navigation · Vorräte · Kreativlösung\n\n**Folgen:** Stillstand, Umweg, Magie, Rudern"
+        },
+        {
+          "id": "bw1-card-us3",
+          "title": "Nebelschleier",
+          "body": "Ein dünner Nebel zieht auf und verschluckt langsam die Sicht.\n\n**Frage:** Fahrt ihr weiter oder werdet ihr vorsichtig?\n\n**Prüfungen:** Ausguck · Navigation\n\n**Folgen:** Kursabweichung, Sicherheit, Spannung"
+        },
+        {
+          "id": "bw1-card-us4",
+          "title": "Knarrendes Tauwerk",
+          "body": "Ein Tau wirkt belastet und klingt nicht gesund.\n\n**Frage:** Behebt ihr es sofort?\n\n**Prüfungen:** Reparatur · Segel\n\n**Folgen:** Früh gelöst oder späterer Schaden"
+        },
+        {
+          "id": "bw1-card-us5",
+          "title": "Unklare Strömung",
+          "body": "Das Schiff driftet beinahe unmerklich vom Kurs ab.\n\n**Frage:** Wie merkt und korrigiert ihr das?\n\n**Prüfungen:** Navigation · Ausguck\n\n**Folgen:** Kurskorrektur oder falsche Richtung"
+        },
+        {
+          "id": "bw1-card-us6",
+          "title": "Fremde Segel am Horizont",
+          "body": "Ein anderes Schiff hält Abstand und beobachtet vielleicht.\n\n**Frage:** Kontakt, Vorsicht oder Ausweichen?\n\n**Prüfungen:** Ausguck · Sozial · Tarnung\n\n**Folgen:** Misstrauen, Kontakt, Verfolgung"
+        },
+        {
+          "id": "bw1-card-us7",
+          "title": "Schwerer Himmel",
+          "body": "Dunkle Wolken ziehen auf, doch noch ist nichts entschieden.\n\n**Frage:** Bereitet ihr euch vor?\n\n**Prüfungen:** Ausguck · Natur · Sturm-Sicherung\n\n**Folgen:** Vorbereitung oder Sturmfolge"
+        },
+        {
+          "id": "bw1-card-us8",
+          "title": "Flaches Wasser",
+          "body": "Der Grund kommt näher, das Wasser wirkt tückisch flach.\n\n**Frage:** Fahrt ihr vorsichtig weiter?\n\n**Prüfungen:** Ausguck · Navigation · Anker\n\n**Folgen:** Riffgefahr, Umweg, Ankern"
+        }
+      ]
+    },
+    {
+      "id": "bw1-deck-schwere-see",
+      "name": "Schwere See",
+      "color": "#a63a3a",
+      "cards": [
+        {
+          "id": "bw1-card-ss1",
+          "title": "Starker Gegenwind",
+          "body": "Der Wind steht hart gegen euren Kurs. Direkt voran geht kaum.\n\n**Frage:** Kreuzen, Umweg oder etwas anderes?\n\n**Prüfungen:** Segel · Navigation\n\n**Folgen:** Zeitverlust, Segelbelastung, Kursdrama"
+        },
+        {
+          "id": "bw1-card-ss2",
+          "title": "Sturmfront",
+          "body": "Wind und Wellen bauen sich schnell bedrohlich auf.\n\n**Frage:** Wie bereitet ihr das Schiff vor?\n\n**Prüfungen:** Segel · Sturm-Sicherung\n\n**Folgen:** Schaden, Erschöpfung, Kursverlust"
+        },
+        {
+          "id": "bw1-card-ss3",
+          "title": "Dichte Nebelbank",
+          "body": "Die Sicht bricht fast vollständig weg. Geräusche werden wichtiger als Augen.\n\n**Frage:** Wie findet ihr euren Weg?\n\n**Prüfungen:** Nebel · Ausguck · Navigation\n\n**Folgen:** Riff, Geisterschiff, falscher Kurs"
+        },
+        {
+          "id": "bw1-card-ss4",
+          "title": "Riff voraus",
+          "body": "Brecher verraten scharfe Felsen knapp unter der Oberfläche.\n\n**Frage:** Wie bringt ihr das Schiff herum?\n\n**Prüfungen:** Ausguck · Steuer · Navigation\n\n**Folgen:** Rumpfschaden, Leck, Notmanöver"
+        },
+        {
+          "id": "bw1-card-ss5",
+          "title": "Gerissenes Segel",
+          "body": "Mit einem Knall reißt ein Segel unter Last auf.\n\n**Frage:** Wer kümmert sich darum?\n\n**Prüfungen:** Segel · Reparatur\n\n**Folgen:** Tempoverlust, Folgegefahr, Reparatur"
+        },
+        {
+          "id": "bw1-card-ss6",
+          "title": "Piratenzeichen",
+          "body": "Dunkle Segel ändern Kurs direkt auf euch zu.\n\n**Frage:** Flucht, Täuschung oder Kampf?\n\n**Prüfungen:** Ausguck · Verfolgung · Täuschung\n\n**Folgen:** Jagd, Tribut, Enterkampf"
+        },
+        {
+          "id": "bw1-card-ss7",
+          "title": "Mann über Bord",
+          "body": "Jemand geht ins Wasser. Sekunden zählen.\n\n**Frage:** Wie rettet ihr die Person?\n\n**Prüfungen:** Mann-über-Bord\n\n**Folgen:** Rettung, Erschöpfung, Verlust"
+        },
+        {
+          "id": "bw1-card-ss8",
+          "title": "Etwas unter dem Kiel",
+          "body": "Ein großer Schatten bewegt sich unter eurem Schiff.\n\n**Frage:** Wie reagiert ihr?\n\n**Prüfungen:** Ausguck · Steuer · Kampf\n\n**Folgen:** Panik, Schaden, Monsterbegegnung"
+        }
+      ]
+    }
+  ]
+}

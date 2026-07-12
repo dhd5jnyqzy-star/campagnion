@@ -21,9 +21,12 @@ import type {
   CampaignId,
   CharacterId,
   CombatantId,
+  DeckCardId,
+  DeckId,
   EncounterId,
   EnemyId,
   EventId,
+  HandoutId,
   GameTime,
   GroupId,
   ImportId,
@@ -44,10 +47,12 @@ import type {
   Character,
   Combatant,
   Comment,
+  Deck,
   Encounter,
   Enemy,
   Group,
   GroupWaypoint,
+  Handout,
   MapImage,
   Marker,
   Npc,
@@ -292,6 +297,46 @@ export type GroupUpdated = EventBase<
 export type GroupMoved = EventBase<'group.moved', { groupId: GroupId; waypoint: GroupWaypoint }>;
 
 // ---------------------------------------------------------------------------
+// Handouts & Decks (M6)
+// ---------------------------------------------------------------------------
+
+export type HandoutCreated = EventBase<'handout.created', { handout: Handout }>;
+export type HandoutUpdated = EventBase<
+  'handout.updated',
+  { handoutId: HandoutId; changes: Changes<Omit<Handout, 'expanded'>> }
+>;
+/** Platzieren bzw. Verschieben auf einer Karte. */
+export type HandoutMoved = EventBase<
+  'handout.moved',
+  {
+    handoutId: HandoutId;
+    areaId: AreaId;
+    mapImageId?: MapImageId;
+    position: NormalizedPosition;
+  }
+>;
+/** Auf-/Zuklappen — persistiert, damit der Tisch-Aufbau erhalten bleibt. */
+export type HandoutToggled = EventBase<
+  'handout.toggled',
+  { handoutId: HandoutId; expanded: boolean }
+>;
+
+export type DeckCreated = EventBase<'deck.created', { deck: Deck }>;
+export type DeckUpdated = EventBase<
+  'deck.updated',
+  { deckId: DeckId; changes: Changes<Omit<Deck, 'lastDrawnCardId'>> }
+>;
+export type DeckMoved = EventBase<
+  'deck.moved',
+  { deckId: DeckId; areaId: AreaId; mapImageId?: MapImageId; position: NormalizedPosition }
+>;
+/** Karte ziehen: die Zufallswahl trifft die UI, das Event hält sie fest (Historie). */
+export type DeckCardDrawn = EventBase<
+  'deck.cardDrawn',
+  { deckId: DeckId; cardId: DeckCardId }
+>;
+
+// ---------------------------------------------------------------------------
 // Assets
 // ---------------------------------------------------------------------------
 
@@ -350,6 +395,14 @@ export type GameEvent =
   | GroupCreated
   | GroupUpdated
   | GroupMoved
+  | HandoutCreated
+  | HandoutUpdated
+  | HandoutMoved
+  | HandoutToggled
+  | DeckCreated
+  | DeckUpdated
+  | DeckMoved
+  | DeckCardDrawn
   | AssetImported;
 
 /** String-Union aller Event-Typen, z. B. für Filter in der Timeline. */

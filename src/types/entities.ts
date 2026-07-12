@@ -16,7 +16,10 @@ import type {
   CharacterId,
   CombatantId,
   CommentId,
+  DeckCardId,
+  DeckId,
   EncounterId,
+  HandoutId,
   EnemyId,
   GameTime,
   GridConfig,
@@ -327,6 +330,56 @@ export interface GroupWaypoint {
   position: NormalizedPosition;
   /** Spielwelt-Tag der Ankunft an diesem Wegpunkt. */
   gameDay: number;
+}
+
+// ---------------------------------------------------------------------------
+// Handout & Deck (Schema-Erweiterung M6)
+// ---------------------------------------------------------------------------
+
+/**
+ * Handout (M6): frei platzierbare, aufklappbare Text-Kachel auf dem Canvas —
+ * Vorlesetexte, Spickzettel, Briefe, Ortsnotizen. Ersetzt die Zettelwirtschaft:
+ * zusammengeklappt nur der Titel, aufgeklappt der volle Text; der Zustand
+ * bleibt gespeichert ("manche offen lassen"). Ohne Position lebt das Handout
+ * in der Bibliothek und wird von dort platziert.
+ */
+export interface Handout {
+  id: HandoutId;
+  title: string;
+  /** Fließtext; Leerzeilen trennen Absätze, "• " beginnt Aufzählungszeilen. */
+  body: string;
+  /** Gruppierung in der Bibliothek, z. B. "Cheat-Sheet", "Orte", "Briefe". */
+  category?: string;
+  areaId?: AreaId;
+  mapImageId?: MapImageId;
+  position?: NormalizedPosition;
+  /** Aufgeklappt auf dem Canvas — bewusst persistiert (§3.1: alles ist Event). */
+  expanded: boolean;
+}
+
+/**
+ * Kartendeck (M6): eine Kategorie von Zieh-Karten (z. B. Überfahrtskarten
+ * "Gute See"). Auf dem Canvas nur die Kategorie-Kachel; ein Tipp zieht eine
+ * zufällige Karte der Kategorie (deck.cardDrawn-Event → Historie).
+ */
+export interface Deck {
+  id: DeckId;
+  name: string;
+  /** Akzentfarbe der Kachel/Karten (CSS-Farbe). */
+  color: string;
+  cards: DeckCard[];
+  areaId?: AreaId;
+  mapImageId?: MapImageId;
+  position?: NormalizedPosition;
+  /** Zuletzt gezogene Karte (Replay-Ergebnis der cardDrawn-Events). */
+  lastDrawnCardId?: DeckCardId;
+}
+
+export interface DeckCard {
+  id: DeckCardId;
+  title: string;
+  /** Kartentext; gleiche Konventionen wie Handout.body. */
+  body: string;
 }
 
 // ---------------------------------------------------------------------------

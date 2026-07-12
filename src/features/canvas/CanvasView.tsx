@@ -24,10 +24,13 @@ import { appendGameEvent, placeEncounter } from '../game/thunks';
 import {
   selectAreaStats,
   selectChildAreas,
+  selectDecksOnMap,
+  selectHandoutsOnMap,
   selectMarkersOnMap,
   selectPrimaryMapImage,
 } from '../game/selectors';
 import {
+  cardShown,
   gotoRequested,
   peeked,
   peekClosed,
@@ -36,6 +39,8 @@ import {
   type NavTarget,
   type Viewport,
 } from '../nav/navSlice';
+import { RichText } from '../../components/RichText';
+import type { Deck, Handout } from '../../types';
 import { useAssetUrl } from './useAssetUrl';
 
 /** Weltbreite der Karte in Welteinheiten; Höhe folgt dem Seitenverhältnis. */
@@ -437,6 +442,27 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
           }),
         );
         break;
+      case 'handout':
+        void dispatch(
+          appendGameEvent({
+            type: 'handout.moved',
+            payload: {
+              handoutId: placing.handoutId,
+              areaId: area.id,
+              mapImageId: mapImage.id,
+              position,
+            },
+          }),
+        );
+        break;
+      case 'deck':
+        void dispatch(
+          appendGameEvent({
+            type: 'deck.moved',
+            payload: { deckId: placing.deckId, areaId: area.id, mapImageId: mapImage.id, position },
+          }),
+        );
+        break;
     }
     dispatch(placingChanged(null));
   };
@@ -499,6 +525,92 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
     setDragPos(null);
   };
 
+  // --- Handout-/Deck-Kacheln: ziehen & antippen (M6) -----------------------
+
+  const [tileDragPos, setTileDragPos] = useState<{ id: string; wx: number; wy: number } | null>(
+    null,
+  );
+  const tileDrag = useRef<{
+    kind: 'handout' | 'deck';
+    id: string;
+    pointerId: number;
+    downAt: Point;
+    moved: boolean;
+    wx: number;
+    wy: number;
+  } | null>(null);
+
+  const onTilePointerDown = (
+    e: React.PointerEvent<SVGGElement>,
+    kind: 'handout' | 'deck',
+    item: { id: string; position?: { x: number; y: number } },
+  ) => {
+    if (placing || readOnly || !item.position) return;
+    e.stopPropagation();
+    cancelFly();
+    capturePointer(e.currentTarget, e.pointerId);
+    tileDrag.current = {
+      kind,
+      id: item.id,
+      pointerId: e.pointerId,
+      downAt: localPoint(e),
+      moved: false,
+      wx: item.position.x * WORLD_W,
+      wy: item.position.y * worldH,
+    };
+  };
+
+  const onTilePointerMove = (e: React.PointerEvent<SVGGElement>) => {
+    const d = tileDrag.current;
+    const v = viewRef.current;
+    if (!d || !v || e.pointerId !== d.pointerId) return;
+    const p = localPoint(e);
+    if (!d.moved && dist(d.downAt, p) <= TAP_SLOP) return;
+    d.moved = true;
+    const w = screenToWorld(p, v);
+    d.wx = w.x;
+    d.wy = w.y;
+    setTileDragPos({ id: d.id, wx: w.x, wy: w.y });
+  };
+
+  const onTilePointerUp = (e: React.PointerEvent<SVGGElement>, onTap: () => void) => {
+    const d = tileDrag.current;
+    if (!d || e.pointerId !== d.pointerId) return;
+    tileDrag.current = null;
+    e.stopPropagation();
+    if (d.moved) {
+      const position = { x: clamp01(d.wx / WORLD_W), y: clamp01(d.wy / worldH) };
+      const payload = { areaId: area.id, mapImageId: mapImage.id, position };
+      void dispatch(
+        appendGameEvent(
+          d.kind === 'handout'
+            ? { type: 'handout.moved', payload: { handoutId: d.id, ...payload } }
+            : { type: 'deck.moved', payload: { deckId: d.id, ...payload } },
+        ),
+      );
+    } else if (e.type !== 'pointercancel') {
+      onTap();
+    }
+    setTileDragPos(null);
+  };
+
+  const toggleHandout = (h: Handout) =>
+    void dispatch(
+      appendGameEvent({
+        type: 'handout.toggled',
+        payload: { handoutId: h.id, expanded: !h.expanded },
+      }),
+    );
+
+  const drawCard = (deck: Deck) => {
+    if (deck.cards.length === 0) return;
+    const card = deck.cards[Math.floor(Math.random() * deck.cards.length)];
+    void dispatch(
+      appendGameEvent({ type: 'deck.cardDrawn', payload: { deckId: deck.id, cardId: card.id } }),
+    );
+    dispatch(cardShown({ deckId: deck.id, cardId: card.id }));
+  };
+
   // --- Rendering -----------------------------------------------------------
 
   const markers = game ? selectMarkersOnMap(game, area.id, mapImage.id, true) : [];
@@ -506,6 +618,13 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
     ? selectChildAreas(game, area.id).filter((a) => a.zoneOnParent)
     : [];
   const groups = game ? Object.values(game.groups) : [];
+  const handouts = game ? selectHandoutsOnMap(game, area.id, mapImage.id, true) : [];
+  const decks = game ? selectDecksOnMap(game, area.id, mapImage.id, true) : [];
+
+  const tileWorldPos = (item: { id: string; position?: { x: number; y: number } }) => ({
+    wx: tileDragPos?.id === item.id ? tileDragPos.wx : (item.position?.x ?? 0) * WORLD_W,
+    wy: tileDragPos?.id === item.id ? tileDragPos.wy : (item.position?.y ?? 0) * worldH,
+  });
 
   const v = view ?? { cx: WORLD_W / 2, cy: worldH / 2, zoom: 1 };
   const viewBox = `${v.cx - size.w / 2 / v.zoom} ${v.cy - size.h / 2 / v.zoom} ${
@@ -550,6 +669,101 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
         {groups.map((g) => (
           <TravelLine key={g.id} waypoints={g.waypoints} areaId={area.id} zoom={v.zoom} worldH={worldH} />
         ))}
+
+        {handouts.map((h) => {
+          const { wx, wy } = tileWorldPos(h);
+          const width = h.expanded ? 300 : 224;
+          const title = h.title.length > 30 ? h.title.slice(0, 29) + '…' : h.title;
+          return (
+            <g key={h.id} transform={`translate(${wx} ${wy}) scale(${1 / v.zoom})`}>
+              <g
+                className="tile-header"
+                onPointerDown={(e) => onTilePointerDown(e, 'handout', h)}
+                onPointerMove={onTilePointerMove}
+                onPointerUp={(e) => onTilePointerUp(e, () => toggleHandout(h))}
+                onPointerCancel={(e) => onTilePointerUp(e, () => {})}
+              >
+                <rect
+                  x={-width / 2}
+                  y={0}
+                  width={width}
+                  height={36}
+                  rx={10}
+                  className={h.expanded ? 'handout-head expanded' : 'handout-head'}
+                />
+                <text x={-width / 2 + 12} y={23} className="handout-title">
+                  {h.expanded ? '▾ ' : '▸ '}
+                  {title}
+                </text>
+                <text
+                  x={width / 2 - 16}
+                  y={23}
+                  className="tile-edit"
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    dispatch(peeked({ kind: 'handout', id: h.id }));
+                  }}
+                >
+                  ✎
+                </text>
+              </g>
+              {h.expanded && (
+                <foreignObject x={-width / 2} y={36} width={width} height={340}>
+                  <div
+                    className="handout-body"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onWheel={(e) => e.stopPropagation()}
+                  >
+                    <RichText body={h.body} />
+                  </div>
+                </foreignObject>
+              )}
+            </g>
+          );
+        })}
+
+        {decks.map((d) => {
+          const { wx, wy } = tileWorldPos(d);
+          return (
+            <g
+              key={d.id}
+              transform={`translate(${wx} ${wy}) scale(${1 / v.zoom})`}
+              className="tile-header"
+              onPointerDown={(e) => onTilePointerDown(e, 'deck', d)}
+              onPointerMove={onTilePointerMove}
+              onPointerUp={(e) => onTilePointerUp(e, () => drawCard(d))}
+              onPointerCancel={(e) => onTilePointerUp(e, () => {})}
+            >
+              <rect x={-90} y={-4} width={180} height={64} rx={12} className="deck-shadow" />
+              <rect
+                x={-94}
+                y={-8}
+                width={180}
+                height={64}
+                rx={12}
+                className="deck-tile"
+                style={{ stroke: d.color }}
+              />
+              <text y={16} textAnchor="middle" className="deck-name" style={{ fill: d.color }}>
+                {d.name}
+              </text>
+              <text y={38} textAnchor="middle" className="deck-hint">
+                {d.cards.length} Karten · tippen zum Ziehen
+              </text>
+              <text
+                x={74}
+                y={16}
+                className="tile-edit"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  dispatch(peeked({ kind: 'deck', id: d.id }));
+                }}
+              >
+                ✎
+              </text>
+            </g>
+          );
+        })}
 
         {markers.map((m) => {
           const wx = dragPos?.id === m.id ? dragPos.wx : m.position.x * WORLD_W;
