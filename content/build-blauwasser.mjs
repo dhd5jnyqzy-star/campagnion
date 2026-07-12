@@ -936,7 +936,9 @@ const pkg = {
   decks,
 };
 
-const out = join(dirname(fileURLToPath(import.meta.url)), 'blauwasser-paket.json');
+// Ausgabe nach public/, damit Vite es in den Build kopiert und die deployte
+// Seite es unter <base>blauwasser-paket.json zum Import anbietet.
+const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'blauwasser-paket.json');
 writeFileSync(out, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
 console.log(
   `geschrieben: ${out}\n` +

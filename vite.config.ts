@@ -2,7 +2,16 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// Minimal getippt statt @types/node — vite.config läuft in Node.
+declare const process: { env: Record<string, string | undefined> };
+
+// Basispfad: lokal & Datei-Kopie relativ ('./'), GitHub Pages unter dem
+// Repo-Unterpfad (der Deploy-Workflow setzt DEPLOY_BASE=/campagnion/).
+// Ein absoluter Pfad ist für den Service-Worker-Scope auf Pages nötig.
+const base = process.env.DEPLOY_BASE || './';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     // PWA (§2/M5): Vollbild-Installation über Safari ("Zum Home-Bildschirm"),
@@ -34,6 +43,4 @@ export default defineConfig({
       },
     }),
   ],
-  // Relative Pfade: deploybar via GitHub Pages oder simple Datei-Kopie (§2).
-  base: './',
 });
