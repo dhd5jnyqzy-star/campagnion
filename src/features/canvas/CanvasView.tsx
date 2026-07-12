@@ -274,8 +274,41 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
     panLast: Point | null;
     pinchLast: { d: number; c: Point } | null;
   }>({ moved: false, downAt: null, panLast: null, pinchLast: null });
-  /** Von einer Zone bei pointerup gesetzt; der SVG-Handler wertet es aus. */
-  const zoneTapRef = useRef<Area | null>(null);
+
+  /**
+   * Zone unter einem Tipp finden (§4.1). Zonen fangen selbst keine Pointer-
+   * Events, weil das SVG den Pointer fürs Pan/Pinch captured — daher per
+   * Hit-Test: aufgeblätterte Zonen über ihr Weltrechteck, verdichtete Badges
+   * über die Bildschirm-Nähe zum Zonenmittelpunkt (großzügiges Touch-Ziel).
+   */
+  const hitZone = (screenP: Point, worldP: Point): Area | undefined => {
+    if (!game) return undefined;
+    const children = selectChildAreas(game, area.id).filter((a) => a.zoneOnParent);
+    for (const a of children) {
+      const z = a.zoneOnParent!;
+      if (
+        worldP.x >= z.x * WORLD_W &&
+        worldP.x <= (z.x + z.width) * WORLD_W &&
+        worldP.y >= z.y * worldH &&
+        worldP.y <= (z.y + z.height) * worldH
+      ) {
+        return a;
+      }
+    }
+    const v = viewRef.current;
+    const { w, h } = sizeRef.current;
+    if (!v) return undefined;
+    for (const a of children) {
+      if (v.zoom >= a.zoomThreshold) continue; // nur Badge-Modus
+      const z = a.zoneOnParent!;
+      const cx = (z.x + z.width / 2) * WORLD_W;
+      const cy = (z.y + z.height / 2) * worldH;
+      const sx = (cx - v.cx) * v.zoom + w / 2;
+      const sy = (cy - v.cy) * v.zoom + h / 2;
+      if (Math.abs(screenP.x - sx) < 80 && Math.abs(screenP.y - sy) < 28) return a;
+    }
+    return undefined;
+  };
 
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
     cancelFly();
@@ -331,22 +364,23 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
       // Von Pinch zurück zu Pan mit dem verbleibenden Finger.
       g.pinchLast = null;
       g.panLast = [...pointers.current.values()][0];
-      zoneTapRef.current = null;
       return;
     }
     if (pointers.current.size > 0) return;
 
     const v = viewRef.current;
-    const tappedZone = zoneTapRef.current;
-    zoneTapRef.current = null;
     if (!g.moved && v && e.type !== 'pointercancel') {
+      const world = screenToWorld(p, v);
       if (placing) {
-        placeAt(screenToWorld(p, v));
-      } else if (tappedZone) {
-        // Tipp auf eine Zone: Bereich betreten (semantisches Zoomen, §4.1).
-        dispatch(gotoRequested({ label: tappedZone.name, target: { areaId: tappedZone.id } }));
+        placeAt(world);
       } else {
-        dispatch(peekClosed());
+        const zone = hitZone(p, world);
+        if (zone) {
+          // Tipp auf eine Zone: Bereich betreten (semantisches Zoomen, §4.1).
+          dispatch(gotoRequested({ label: zone.name, target: { areaId: zone.id } }));
+        } else {
+          dispatch(peekClosed());
+        }
       }
     }
     g.panLast = null;
@@ -655,15 +689,7 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
         {gridVisible && mapImage.grid && <GridOverlay grid={mapImage.grid} w={WORLD_W} h={worldH} />}
 
         {childAreas.map((child) => (
-          <AreaZone
-            key={child.id}
-            area={child}
-            zoom={v.zoom}
-            worldH={worldH}
-            onTapStart={() => {
-              zoneTapRef.current = child;
-            }}
-          />
+          <AreaZone key={child.id} area={child} zoom={v.zoom} worldH={worldH} />
         ))}
 
         {groups.map((g) => (
@@ -797,18 +823,17 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
 /**
  * Zone eines Kind-Bereichs (§4.1): unterhalb des Zoomschwellwerts nur das
  * konfigurierte Badge, darüber "aufgeblättert" — Zonenrahmen mit eigener
- * Karte, falls vorhanden. Tipp betritt den Bereich (via zoneTapRef im Parent).
+ * Karte, falls vorhanden. Rein visuell; der Tipp wird im SVG per hitZone
+ * ausgewertet (Pointer-Capture verhindert eigene Zonen-Events).
  */
 function AreaZone({
   area,
   zoom,
   worldH,
-  onTapStart,
 }: {
   area: Area;
   zoom: number;
   worldH: number;
-  onTapStart: () => void;
 }) {
   const game = useAppSelector((s) => s.game.historyState ?? s.game.state);
   const zone = area.zoneOnParent;
@@ -832,7 +857,7 @@ function AreaZone({
   if (area.badge.showText && area.badge.text) badgeLines.push(area.badge.text);
 
   return (
-    <g className="area-zone" onPointerUp={onTapStart}>
+    <g className="area-zone">
       {unfolded ? (
         <>
           {childMapUrl && (
