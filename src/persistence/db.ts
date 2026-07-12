@@ -112,6 +112,13 @@ export class CampaignStore {
     return (await this.db.add('events', event)) as number;
   }
 
+  /** Bulk-Append für Importe (§5): eine Transaktion, Reihenfolge bleibt erhalten. */
+  async appendEvents(events: GameEvent[]): Promise<void> {
+    const tx = this.db.transaction('events', 'readwrite');
+    for (const event of events) void tx.store.add(event);
+    await tx.done;
+  }
+
   /** Alle Events mit seq > afterSeq, in Log-Reihenfolge. afterSeq 0 = kompletter Log. */
   async getEventsAfter(afterSeq: number): Promise<StoredEvent[]> {
     const tx = this.db.transaction('events');
@@ -148,6 +155,19 @@ export class CampaignStore {
 
   close(): void {
     this.db.close();
+  }
+
+  /**
+   * Kampagnen-Datenbank komplett löschen — nur für den Vollimport-Modus
+   * "Ersetzen" (§5, mit explizitem Konfliktdialog; nie stumm).
+   */
+  static deleteDatabase(campaignId: CampaignId): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.deleteDatabase(CAMPAIGN_DB_PREFIX + campaignId);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error ?? new Error('Löschen fehlgeschlagen'));
+      req.onblocked = () => reject(new Error('Datenbank ist noch geöffnet'));
+    });
   }
 }
 

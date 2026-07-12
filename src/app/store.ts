@@ -12,6 +12,12 @@ export const store = configureStore({
     game: gameReducer,
     nav: navReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      // Thunk-Argumente enthalten Files/Blobs (Importe, Uploads) — die landen
+      // nur in meta.arg, nie im State. Der State selbst bleibt rein serialisierbar.
+      serializableCheck: { ignoredActionPaths: ['meta.arg'] },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

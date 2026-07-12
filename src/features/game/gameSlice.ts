@@ -10,12 +10,13 @@
  * Zeitregler — reine Anzeige, niemals Ziel von Mutationen; null = Gegenwart.
  */
 
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { createSlice, current, isAnyOf } from '@reduxjs/toolkit';
 import type { CampaignId, GameState } from '../../types';
 import { applyEvent } from './replay';
 import {
   addBattlemap,
   appendGameEvent,
+  applyContentPackage,
   createCampaign,
   endSession,
   importMapImage,
@@ -30,7 +31,13 @@ import {
 /** Thunks mit einem einzelnen AppendResult (können Korrektur-Replays tragen). */
 const singleThunks = [appendGameEvent, endSession, undoLastEvent] as const;
 /** Thunks, die einen Batch von AppendResults liefern (nie Korrektur-Events). */
-const batchThunks = [importMapImage, placeEncounter, uploadSheet, addBattlemap] as const;
+const batchThunks = [
+  importMapImage,
+  placeEncounter,
+  uploadSheet,
+  addBattlemap,
+  applyContentPackage,
+] as const;
 
 export interface GameSliceState {
   campaignId: CampaignId | null;
@@ -78,14 +85,21 @@ const gameSlice = createSlice({
       .addMatcher(isAnyOf(...singleThunks.map((t) => t.fulfilled)), (s, action) => {
         const { seq, event, replaced } = action.payload;
         s.lastSeq = seq;
-        // Korrektur-Events erzwingen vollen Replay; alles andere wird live eingerechnet.
-        s.state = replaced ? replaced.state : applyEvent(s.state as GameState | null, event);
+        // Korrektur-Events erzwingen vollen Replay; alles andere wird live
+        // eingerechnet. Wichtig: applyEvent nutzt selbst immer/produce und darf
+        // deshalb nie auf dem Draft laufen — current() entdraftet zuerst,
+        // sonst landen widerrufene Proxies im Store.
+        s.state = replaced
+          ? replaced.state
+          : applyEvent(s.state ? (current(s) as GameSliceState).state : null, event);
       })
       .addMatcher(isAnyOf(...batchThunks.map((t) => t.fulfilled)), (s, action) => {
+        let state = s.state ? (current(s) as GameSliceState).state : null;
         for (const { seq, event } of action.payload as AppendResult[]) {
           s.lastSeq = seq;
-          s.state = applyEvent(s.state as GameState | null, event);
+          state = applyEvent(state, event);
         }
+        s.state = state;
       })
       .addMatcher(isAnyOf(createCampaign.pending, openCampaign.pending), (s) => {
         s.status = 'loading';

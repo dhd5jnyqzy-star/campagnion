@@ -144,6 +144,23 @@ export const openCampaign = createAsyncThunk(
       state = replay(all.map(({ event }) => event));
       lastSeq = all.length > 0 ? all[all.length - 1].seq : 0;
     }
+
+    // Snapshots automatisiert (M5/§5): läuft ohne Sessionsgrenzen viel Log
+    // auf (z. B. Datenpflege am PC), beim Öffnen einen Snapshot nachziehen.
+    if (state && rest.length > 500) {
+      const lastEvent = rest[rest.length - 1];
+      await store.saveSnapshot(
+        {
+          campaignId,
+          lastEventId: lastEvent.event.id,
+          takenAt: nowIso(),
+          label: 'Automatisch (großer Log)',
+          state,
+        },
+        lastEvent.seq,
+      );
+    }
+
     return { campaignId, state, lastSeq };
   },
 );
@@ -437,6 +454,42 @@ export const viewHistory = createAsyncThunk(
     const events = endIdx >= 0 ? all.slice(0, endIdx + 1) : all;
     const name = game.sessions[args.sessionId]?.name ?? 'Session';
     return { state: replay(events), label: `Ende ${name}` };
+  },
+);
+
+/**
+ * Teilimport anwenden (§5): geplanter Event-Batch + Asset-Blobs. Alle Events
+ * tragen dieselbe importId; ein abschließendes import.applied markiert den
+ * Batch im Log. Additiv — bestehende Daten werden nie überschrieben.
+ */
+export const applyContentPackage = createAsyncThunk(
+  'game/applyContentPackage',
+  async (
+    args: {
+      packageName: string;
+      events: NewGameEvent[];
+      summary: string;
+      /** AssetId (nach Remap) → Blob. */
+      assetBlobs: Map<string, Blob>;
+    },
+    thunkApi,
+  ): Promise<AppendResult[]> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const store = getCurrentStore();
+    for (const [assetId, blob] of args.assetBlobs) {
+      await store.putAsset(assetId, blob);
+    }
+    const importId = newId();
+    const batch = makeBatch(campaignId, game);
+    for (const input of args.events) {
+      await batch.append({ ...input, importId } as NewGameEvent);
+    }
+    await batch.append({
+      type: 'import.applied',
+      payload: { importId, packageName: args.packageName, summary: args.summary },
+      importId,
+    });
+    return batch.results;
   },
 );
 

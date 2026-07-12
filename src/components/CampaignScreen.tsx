@@ -32,6 +32,7 @@ import { closeCurrentStore } from '../persistence/db';
 import type { Area, GameTime, TimeOfDay } from '../types';
 import { CombatScreen } from './CombatScreen';
 import { Dock } from './Dock';
+import { ExchangeMenu } from './ExchangeMenu';
 import { HistoryBar } from './HistoryBar';
 import { Sidepanel } from './Sidepanel';
 
@@ -149,6 +150,7 @@ export function CampaignScreen() {
         >
           {formatGameTime(clock)} ▸
         </button>
+        {!inHistory && <ExchangeMenu />}
       </header>
 
       {error && <p className="error banner-error">{error}</p>}
