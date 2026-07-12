@@ -170,10 +170,13 @@ export type CombatStarted = EventBase<
   'combat.started',
   { encounterId: EncounterId; combatants: Combatant[] }
 >;
-/** Spontanen Gegner mit einem Tipp nachschieben; enemy wird am Encounter angelegt. */
+/**
+ * Spontanen Gegner mit einem Tipp nachschieben (§4.4): enemy wird am Encounter
+ * angelegt, newCombatants sind nur die zusätzlichen Initiative-Einträge dafür.
+ */
 export type CombatEnemyAdded = EventBase<
   'combat.enemyAdded',
-  { encounterId: EncounterId; enemy: Enemy; combatants: Combatant[] }
+  { encounterId: EncounterId; enemy: Enemy; newCombatants: Combatant[] }
 >;
 export type CombatInitiativeSet = EventBase<
   'combat.initiativeSet',

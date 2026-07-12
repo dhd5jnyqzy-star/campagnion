@@ -22,7 +22,6 @@
 
 import type {
   AreaId,
-  AssetId,
   CampaignId,
   IsoDateTime,
   MapImageId,

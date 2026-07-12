@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "wsl",
+      "runtimeArgs": [
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "bash",
+        "-c",
+        "source ~/.nvm/nvm.sh && cd ~/repos/campagnion && npm run dev -- --host --port 5173"
+      ],
+      "port": 5173
+    }
+  ]
+}

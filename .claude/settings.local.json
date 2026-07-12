@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /c/Users/hanne/AppData/Local/Temp/claude/--wsl-localhost-ubuntu-22-04-home-mahone-repos-campagnion/38a22688-55bc-4774-befa-93564ae6e25c/scratchpad/typecheck)",
+      "Bash(cp //wsl.localhost/ubuntu-22.04/home/mahone/repos/campagnion/src/types/*.ts /c/Users/hanne/AppData/Local/Temp/claude/--wsl-localhost-ubuntu-22-04-home-mahone-repos-campagnion/38a22688-55bc-4774-befa-93564ae6e25c/scratchpad/typecheck/)",
+      "Read(//c/Users/hanne/AppData/Local/Temp/claude/--wsl-localhost-ubuntu-22-04-home-mahone-repos-campagnion/38a22688-55bc-4774-befa-93564ae6e25c/scratchpad/**)",
+      "Bash(npx -y -p typescript tsc --noEmit --strict --target es2020 --module esnext --moduleResolution bundler *.ts)",
+      "Bash(wsl.exe -l -q)",
+      "Bash(wsl.exe -d Ubuntu-22.04 -- bash -lc \"node --version; npm --version\")",
+      "Bash(wsl.exe -d Ubuntu-22.04 -- bash -lc 'which -a node npm; ls ~/.nvm/versions/node 2>/dev/null; echo PATH=$PATH')",
+      "Bash(wsl.exe -d Ubuntu-22.04 -- bash -c 'source ~/.nvm/nvm.sh && cd ~/repos/campagnion && npm install 2>&1 | tail -5')",
+      "Bash(wsl.exe -d Ubuntu-22.04 -- bash -c 'source ~/.nvm/nvm.sh && cd ~/repos/campagnion && npx tsc --noEmit && echo TYPECHECK_OK && npx vitest run 2>&1 | tail -15')"
+    ]
+  }
+}
