@@ -74,10 +74,6 @@ function clampZoom(z: number): number {
   return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
 }
 
-function clamp01(v: number): number {
-  return Math.min(1, Math.max(0, v));
-}
-
 function dist(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -409,7 +405,10 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
 
   const placeAt = (w: Point) => {
     if (!game || !placing || readOnly) return;
-    const position = { x: clamp01(w.x / WORLD_W), y: clamp01(w.y / worldH) };
+    // Bewusst NICHT auf 0–1 geklemmt: Marker/Bereiche dürfen auch neben der
+    // Karte liegen (offenes Wasser). Werte < 0 bzw. > 1 sind weiterhin gültige
+    // normierte Koordinaten relativ zum selben Kartenbild (Bildtausch bleibt ok).
+    const position = { x: w.x / WORLD_W, y: w.y / worldH };
 
     switch (placing.kind) {
       case 'marker': {
@@ -437,8 +436,8 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
           name: 'Neuer Bereich',
           parentId: area.id,
           zoneOnParent: {
-            x: clamp01(position.x - 0.09),
-            y: clamp01(position.y - 0.07),
+            x: position.x - 0.09,
+            y: position.y - 0.07,
             width: 0.18,
             height: 0.14,
           },
@@ -548,7 +547,7 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
     markerDrag.current = null;
     e.stopPropagation();
     if (d.moved) {
-      const position = { x: clamp01(d.wx / WORLD_W), y: clamp01(d.wy / worldH) };
+      const position = { x: d.wx / WORLD_W, y: d.wy / worldH };
       void dispatch(
         appendGameEvent({ type: 'marker.moved', payload: { markerId: m.id, position } }),
       );
@@ -613,7 +612,7 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
     tileDrag.current = null;
     e.stopPropagation();
     if (d.moved) {
-      const position = { x: clamp01(d.wx / WORLD_W), y: clamp01(d.wy / worldH) };
+      const position = { x: d.wx / WORLD_W, y: d.wy / worldH };
       const payload = { areaId: area.id, mapImageId: mapImage.id, position };
       void dispatch(
         appendGameEvent(
