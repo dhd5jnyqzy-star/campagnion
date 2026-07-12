@@ -31,7 +31,12 @@ jobs:
       - run: npm run build
         env:
           DEPLOY_BASE: /campagnion/
+      # enablement: true legt die Pages-Site automatisch an (Quelle "GitHub
+      # Actions"), falls im Repo noch nicht aktiviert — spart den manuellen
+      # Klick in Settings -> Pages.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
