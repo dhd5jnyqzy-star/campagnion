@@ -172,10 +172,212 @@ input[type='text']:focus {
 
 .canvas-placeholder {
   flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.banner-error {
+  margin: 0;
+  padding: 8px 16px;
+  background: #3a1f22;
+}
+
+/* --- Canvas (M2) --- */
+
+.stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas-root {
+  position: absolute;
+  inset: 0;
+}
+
+svg.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Gesten gehören dem Canvas, nie der Seite (§2, §4.1). */
+  touch-action: none;
+  background: #0b0d11;
+  cursor: grab;
+}
+
+svg.canvas.placing {
+  cursor: crosshair;
+}
+
+.marker {
+  cursor: pointer;
+}
+
+.marker-label {
+  font-size: 12px;
+  fill: var(--text);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: #0f1115;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+.grid-line {
+  stroke: rgba(230, 232, 235, 0.22);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.grid-label {
+  fill: rgba(230, 232, 235, 0.55);
+}
+
+/* --- Zurück-Leiste (Navigationsstack, §4.3) --- */
+
+.backbar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100% - 20px);
+}
+
+.backbar button {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(26, 30, 38, 0.9);
+}
+
+.backbar-current {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(110, 168, 254, 0.18);
+  color: var(--accent);
+}
+
+/* --- Toolbar (einhändig erreichbar, §4.5) --- */
+
+.toolbar {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.toolbar button {
+  background: rgba(26, 30, 38, 0.92);
+}
+
+.toolbar button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --- Sidepanel (Peek, §4.2) --- */
+
+.sidepanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(360px, 85vw);
+  background: var(--bg-raised);
+  border-left: 1px solid var(--border);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.sidepanel-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sidepanel-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.sidepanel-title:focus {
+  background: var(--bg);
+  border-color: var(--border);
+  outline: none;
+}
+
+.sidepanel-close {
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+.sidepanel-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidepanel-meta label {
+  display: flex;
+  align-items: center;
   gap: 8px;
   color: var(--text-muted);
+}
+
+.sidepanel-meta select {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.sidepanel-meta p {
+  margin: 0;
+}
+
+.sidepanel-goto {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sidepanel-section h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.sidepanel-section p {
+  margin: 0;
+}
+
+.event-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }

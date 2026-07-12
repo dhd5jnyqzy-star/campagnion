@@ -9,8 +9,10 @@
  */
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { CampaignId, GameEvent, GameState } from '../../types';
+import type { CampaignId, GameEvent, GameState, MapImage } from '../../types';
 import { newId, nowIso } from '../../lib/ids';
+import { prepareImageImport } from '../../lib/image';
+import { defaultGrid } from '../../lib/grid';
 import {
   CampaignStore,
   getCurrentStore,
@@ -19,6 +21,7 @@ import {
   touchCampaign,
 } from '../../persistence/db';
 import { applyEvent, isCorrectionEvent, replay } from './replay';
+import { selectPrimaryMapImage, selectRootArea } from './selectors';
 
 /** Ergebnis von createCampaign/openCampaign. */
 export interface OpenCampaignResult {
@@ -49,6 +52,41 @@ export interface AppendResult {
 /** Minimaler Blick auf den Store-State, um zirkuläre Typimporte zu vermeiden. */
 interface GameStateSlice {
   game: { campaignId: CampaignId | null; state: GameState | null };
+}
+
+/**
+ * Kern des Event-Wegs: Envelope vervollständigen, persistieren, Ergebnis
+ * liefern. `snapshot` ist der Game-State VOR dem Event (für Uhr + Session).
+ */
+async function persistEvent(
+  campaignId: CampaignId,
+  snapshot: GameState,
+  input: NewGameEvent,
+): Promise<AppendResult> {
+  const store = getCurrentStore();
+  const event = {
+    ...input,
+    id: newId(),
+    campaignId,
+    realTime: nowIso(),
+    // Automatisches Anheften des Spielwelt-Zeitstempels (§3.4) und der Session.
+    gameTime: { ...snapshot.campaign.clock },
+    sessionId: snapshot.activeSessionId,
+  } as GameEvent;
+
+  const seq = await store.appendEvent(event);
+
+  if (isCorrectionEvent(event)) {
+    const all = await store.getEventsAfter(0);
+    return { seq, event, replaced: { state: replay(all.map((s) => s.event)) } };
+  }
+  return { seq, event };
+}
+
+function requireOpenGame(state: unknown): { campaignId: CampaignId; game: GameState } {
+  const { game } = state as GameStateSlice;
+  if (!game.campaignId || !game.state) throw new Error('Keine Kampagne geöffnet');
+  return { campaignId: game.campaignId, game: game.state };
 }
 
 export const createCampaign = createAsyncThunk(
@@ -104,26 +142,81 @@ export const openCampaign = createAsyncThunk(
 export const appendGameEvent = createAsyncThunk(
   'game/appendEvent',
   async (input: NewGameEvent, thunkApi): Promise<AppendResult> => {
-    const { game } = thunkApi.getState() as GameStateSlice;
-    if (!game.campaignId || !game.state) throw new Error('Keine Kampagne geöffnet');
-    const store = getCurrentStore();
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    return persistEvent(campaignId, game, input);
+  },
+);
 
-    const event = {
-      ...input,
-      id: newId(),
-      campaignId: game.campaignId,
-      realTime: nowIso(),
-      // Automatisches Anheften des Spielwelt-Zeitstempels (§3.4) und der Session.
-      gameTime: { ...game.state.campaign.clock },
-      sessionId: game.state.activeSessionId,
-    } as GameEvent;
+/**
+ * Kartenbild importieren (M2, §3.3 MapImage): Blob herunterskalieren und in
+ * IndexedDB ablegen, dann als Event-Batch anwenden:
+ * - asset.imported (Metadaten)
+ * - beim ersten Mal: area.created "Übersicht" (Wurzelbereich) + mapImage.added
+ * - sonst: mapImage.replaced — deckungsgleicher Tausch, Marker bleiben
+ *   (Edge Case 5, bewusst ohne Kalibrierung)
+ */
+export const importMapImage = createAsyncThunk(
+  'game/importMapImage',
+  async (file: File, thunkApi): Promise<AppendResult[]> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const prepared = await prepareImageImport(file);
 
-    const seq = await store.appendEvent(event);
+    const assetId = newId();
+    await getCurrentStore().putAsset(assetId, prepared.blob);
 
-    if (isCorrectionEvent(event)) {
-      const all = await store.getEventsAfter(0);
-      return { seq, event, replaced: { state: replay(all.map((s) => s.event)) } };
+    const results: AppendResult[] = [];
+    let state = game;
+    const append = async (input: NewGameEvent) => {
+      const result = await persistEvent(campaignId, state, input);
+      // Batch-Events bauen aufeinander auf (Area → MapImage).
+      state = applyEvent(state, result.event) ?? state;
+      results.push(result);
+    };
+
+    await append({
+      type: 'asset.imported',
+      payload: {
+        asset: {
+          id: assetId,
+          kind: 'mapImage',
+          fileName: file.name,
+          mimeType: prepared.mimeType,
+          byteSize: prepared.blob.size,
+          width: prepared.width,
+          height: prepared.height,
+        },
+      },
+    });
+
+    let rootArea = selectRootArea(state);
+    if (!rootArea) {
+      rootArea = {
+        id: newId(),
+        name: 'Übersicht',
+        parentId: null,
+        zoomThreshold: 0,
+        badge: { showQuestMarkers: false, showEncounterCount: false, showText: false },
+      };
+      await append({ type: 'area.created', payload: { area: rootArea } });
     }
-    return { seq, event };
+
+    const existing = selectPrimaryMapImage(state, rootArea.id);
+    if (existing) {
+      await append({
+        type: 'mapImage.replaced',
+        payload: { mapImageId: existing.id, assetId },
+      });
+    } else {
+      const mapImage: MapImage = {
+        id: newId(),
+        areaId: rootArea.id,
+        assetId,
+        order: 0,
+        grid: defaultGrid(prepared.width, prepared.height),
+      };
+      await append({ type: 'mapImage.added', payload: { mapImage } });
+    }
+
+    return results;
   },
 );

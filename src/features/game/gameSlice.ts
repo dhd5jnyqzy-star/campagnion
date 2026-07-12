@@ -11,7 +11,7 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { CampaignId, GameState } from '../../types';
 import { applyEvent } from './replay';
-import { appendGameEvent, createCampaign, openCampaign } from './thunks';
+import { appendGameEvent, createCampaign, importMapImage, openCampaign } from './thunks';
 
 export interface GameSliceState {
   campaignId: CampaignId | null;
@@ -48,6 +48,12 @@ const gameSlice = createSlice({
         // Korrektur-Events erzwingen vollen Replay; alles andere wird live eingerechnet.
         s.state = replaced ? replaced.state : applyEvent(s.state as GameState | null, event);
       })
+      .addCase(importMapImage.fulfilled, (s, action) => {
+        for (const { seq, event } of action.payload) {
+          s.lastSeq = seq;
+          s.state = applyEvent(s.state as GameState | null, event);
+        }
+      })
       .addMatcher(isAnyOf(createCampaign.pending, openCampaign.pending), (s) => {
         s.status = 'loading';
         s.error = null;
@@ -59,7 +65,12 @@ const gameSlice = createSlice({
         s.status = 'ready';
       })
       .addMatcher(
-        isAnyOf(createCampaign.rejected, openCampaign.rejected, appendGameEvent.rejected),
+        isAnyOf(
+          createCampaign.rejected,
+          openCampaign.rejected,
+          appendGameEvent.rejected,
+          importMapImage.rejected,
+        ),
         (s, action) => {
           s.status = 'error';
           s.error = action.error.message ?? 'Unbekannter Fehler';

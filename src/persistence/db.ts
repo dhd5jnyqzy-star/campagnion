@@ -137,6 +137,15 @@ export class CampaignStore {
     return cursor ? (cursor.value as StoredSnapshot) : null;
   }
 
+  /** Asset-Blob ablegen (Kartenbilder, Battlemaps, PDFs); Metadaten laufen als Event. */
+  async putAsset(assetId: string, blob: Blob): Promise<void> {
+    await this.db.put('assets', blob, assetId);
+  }
+
+  async getAsset(assetId: string): Promise<Blob | undefined> {
+    return (await this.db.get('assets', assetId)) as Blob | undefined;
+  }
+
   close(): void {
     this.db.close();
   }
