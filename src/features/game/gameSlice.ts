@@ -11,7 +11,19 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { CampaignId, GameState } from '../../types';
 import { applyEvent } from './replay';
-import { appendGameEvent, createCampaign, importMapImage, openCampaign } from './thunks';
+import {
+  addBattlemap,
+  appendGameEvent,
+  createCampaign,
+  importMapImage,
+  openCampaign,
+  placeEncounter,
+  uploadSheet,
+  type AppendResult,
+} from './thunks';
+
+/** Thunks, die einen Batch von AppendResults liefern (nie Korrektur-Events). */
+const batchThunks = [importMapImage, placeEncounter, uploadSheet, addBattlemap] as const;
 
 export interface GameSliceState {
   campaignId: CampaignId | null;
@@ -48,8 +60,8 @@ const gameSlice = createSlice({
         // Korrektur-Events erzwingen vollen Replay; alles andere wird live eingerechnet.
         s.state = replaced ? replaced.state : applyEvent(s.state as GameState | null, event);
       })
-      .addCase(importMapImage.fulfilled, (s, action) => {
-        for (const { seq, event } of action.payload) {
+      .addMatcher(isAnyOf(...batchThunks.map((t) => t.fulfilled)), (s, action) => {
+        for (const { seq, event } of action.payload as AppendResult[]) {
           s.lastSeq = seq;
           s.state = applyEvent(s.state as GameState | null, event);
         }
@@ -69,7 +81,7 @@ const gameSlice = createSlice({
           createCampaign.rejected,
           openCampaign.rejected,
           appendGameEvent.rejected,
-          importMapImage.rejected,
+          ...batchThunks.map((t) => t.rejected),
         ),
         (s, action) => {
           s.status = 'error';

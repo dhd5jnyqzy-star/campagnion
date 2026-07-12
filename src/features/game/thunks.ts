@@ -9,7 +9,16 @@
  */
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { CampaignId, GameEvent, GameState, MapImage } from '../../types';
+import type {
+  AreaId,
+  CampaignId,
+  GameEvent,
+  GameState,
+  MapImage,
+  MapImageId,
+  Marker,
+  NormalizedPosition,
+} from '../../types';
 import { newId, nowIso } from '../../lib/ids';
 import { prepareImageImport } from '../../lib/image';
 import { defaultGrid } from '../../lib/grid';
@@ -148,38 +157,50 @@ export const appendGameEvent = createAsyncThunk(
 );
 
 /**
- * Kartenbild importieren (M2, §3.3 MapImage): Blob herunterskalieren und in
+ * Hilfskonstrukt für Event-Batches: Events nacheinander persistieren, wobei
+ * jedes Folge-Event auf dem Zwischenstand aufbaut (Area → MapImage usw.).
+ */
+function makeBatch(campaignId: CampaignId, start: GameState) {
+  const results: AppendResult[] = [];
+  let state = start;
+  return {
+    append: async (input: NewGameEvent) => {
+      const result = await persistEvent(campaignId, state, input);
+      state = applyEvent(state, result.event) ?? state;
+      results.push(result);
+    },
+    get state() {
+      return state;
+    },
+    results,
+  };
+}
+
+/**
+ * Kartenbild importieren (M2/M3, §3.3 MapImage): Blob herunterskalieren und in
  * IndexedDB ablegen, dann als Event-Batch anwenden:
  * - asset.imported (Metadaten)
- * - beim ersten Mal: area.created "Übersicht" (Wurzelbereich) + mapImage.added
- * - sonst: mapImage.replaced — deckungsgleicher Tausch, Marker bleiben
- *   (Edge Case 5, bewusst ohne Kalibrierung)
+ * - ohne areaId und ohne Wurzelbereich: area.created "Übersicht" + mapImage.added
+ * - Bereich ohne Karte: mapImage.added; Bereich mit Karte: mapImage.replaced —
+ *   deckungsgleicher Tausch, Marker bleiben (Edge Case 5, ohne Kalibrierung)
  */
 export const importMapImage = createAsyncThunk(
   'game/importMapImage',
-  async (file: File, thunkApi): Promise<AppendResult[]> => {
+  async (args: { file: File; areaId?: AreaId }, thunkApi): Promise<AppendResult[]> => {
     const { campaignId, game } = requireOpenGame(thunkApi.getState());
-    const prepared = await prepareImageImport(file);
+    const prepared = await prepareImageImport(args.file);
 
     const assetId = newId();
     await getCurrentStore().putAsset(assetId, prepared.blob);
 
-    const results: AppendResult[] = [];
-    let state = game;
-    const append = async (input: NewGameEvent) => {
-      const result = await persistEvent(campaignId, state, input);
-      // Batch-Events bauen aufeinander auf (Area → MapImage).
-      state = applyEvent(state, result.event) ?? state;
-      results.push(result);
-    };
-
-    await append({
+    const batch = makeBatch(campaignId, game);
+    await batch.append({
       type: 'asset.imported',
       payload: {
         asset: {
           id: assetId,
           kind: 'mapImage',
-          fileName: file.name,
+          fileName: args.file.name,
           mimeType: prepared.mimeType,
           byteSize: prepared.blob.size,
           width: prepared.width,
@@ -188,35 +209,154 @@ export const importMapImage = createAsyncThunk(
       },
     });
 
-    let rootArea = selectRootArea(state);
-    if (!rootArea) {
-      rootArea = {
+    let targetArea = args.areaId ? batch.state.areas[args.areaId] : selectRootArea(batch.state);
+    if (!targetArea) {
+      targetArea = {
         id: newId(),
         name: 'Übersicht',
         parentId: null,
         zoomThreshold: 0,
         badge: { showQuestMarkers: false, showEncounterCount: false, showText: false },
       };
-      await append({ type: 'area.created', payload: { area: rootArea } });
+      await batch.append({ type: 'area.created', payload: { area: targetArea } });
     }
 
-    const existing = selectPrimaryMapImage(state, rootArea.id);
+    const existing = selectPrimaryMapImage(batch.state, targetArea.id);
     if (existing) {
-      await append({
+      await batch.append({
         type: 'mapImage.replaced',
         payload: { mapImageId: existing.id, assetId },
       });
     } else {
       const mapImage: MapImage = {
         id: newId(),
-        areaId: rootArea.id,
+        areaId: targetArea.id,
         assetId,
         order: 0,
         grid: defaultGrid(prepared.width, prepared.height),
       };
-      await append({ type: 'mapImage.added', payload: { mapImage } });
+      await batch.append({ type: 'mapImage.added', payload: { mapImage } });
     }
 
-    return results;
+    return batch.results;
+  },
+);
+
+/**
+ * Encounter aus dem Random-Pool einspeisen (§3.3): Marker anlegen (kanonische
+ * Verknüpfung Marker→Encounter) + encounter.placed.
+ */
+export const placeEncounter = createAsyncThunk(
+  'game/placeEncounter',
+  async (
+    args: {
+      encounterId: string;
+      areaId: AreaId;
+      mapImageId?: MapImageId;
+      position: NormalizedPosition;
+    },
+    thunkApi,
+  ): Promise<AppendResult[]> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const encounter = game.encounters[args.encounterId];
+    if (!encounter) throw new Error('Encounter nicht gefunden');
+
+    const marker: Marker = {
+      id: newId(),
+      areaId: args.areaId,
+      mapImageId: args.mapImageId,
+      position: args.position,
+      type: 'encounter',
+      name: encounter.name,
+      encounterIds: [args.encounterId],
+      npcIds: [],
+      questIds: [],
+    };
+
+    const batch = makeBatch(campaignId, game);
+    await batch.append({ type: 'marker.created', payload: { marker } });
+    await batch.append({
+      type: 'encounter.placed',
+      payload: { encounterId: args.encounterId, markerId: marker.id },
+    });
+    return batch.results;
+  },
+);
+
+/**
+ * Charakter-Sheet hochladen (§3.3 Character): PDF-Blob ablegen, als Version
+ * anhängen und direkt aktivieren. Kein Löschen — nur Deaktivieren.
+ */
+export const uploadSheet = createAsyncThunk(
+  'game/uploadSheet',
+  async (args: { characterId: string; file: File }, thunkApi): Promise<AppendResult[]> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const assetId = newId();
+    await getCurrentStore().putAsset(assetId, args.file);
+
+    const sheetId = newId();
+    const batch = makeBatch(campaignId, game);
+    await batch.append({
+      type: 'asset.imported',
+      payload: {
+        asset: {
+          id: assetId,
+          kind: 'sheetPdf',
+          fileName: args.file.name,
+          mimeType: args.file.type || 'application/pdf',
+          byteSize: args.file.size,
+        },
+      },
+    });
+    await batch.append({
+      type: 'character.sheetUploaded',
+      payload: {
+        characterId: args.characterId,
+        sheet: { id: sheetId, assetId, uploadedAt: nowIso(), deactivated: false },
+      },
+    });
+    await batch.append({
+      type: 'character.sheetActivated',
+      payload: { characterId: args.characterId, sheetVersionId: sheetId },
+    });
+    return batch.results;
+  },
+);
+
+/** Battlemap-Bild an einen Encounter hängen (§3.3 Encounter). */
+export const addBattlemap = createAsyncThunk(
+  'game/addBattlemap',
+  async (args: { encounterId: string; file: File }, thunkApi): Promise<AppendResult[]> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const encounter = game.encounters[args.encounterId];
+    if (!encounter) throw new Error('Encounter nicht gefunden');
+
+    const prepared = await prepareImageImport(args.file);
+    const assetId = newId();
+    await getCurrentStore().putAsset(assetId, prepared.blob);
+
+    const batch = makeBatch(campaignId, game);
+    await batch.append({
+      type: 'asset.imported',
+      payload: {
+        asset: {
+          id: assetId,
+          kind: 'battlemap',
+          fileName: args.file.name,
+          mimeType: prepared.mimeType,
+          byteSize: prepared.blob.size,
+          width: prepared.width,
+          height: prepared.height,
+        },
+      },
+    });
+    await batch.append({
+      type: 'encounter.updated',
+      payload: {
+        encounterId: args.encounterId,
+        changes: { battlemapAssetIds: [...encounter.battlemapAssetIds, assetId] },
+      },
+    });
+    return batch.results;
   },
 );

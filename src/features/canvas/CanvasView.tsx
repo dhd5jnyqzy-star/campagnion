@@ -1,35 +1,42 @@
 /**
- * SVG-Canvas (M2, §4.1): Pan/Zoom-Fläche mit Kartenbild, Markern und
- * Grid-Overlay. Eigene Gesten-Implementierung mit Pointer Events:
- * - 1 Finger / Maus ziehen: Pan
- * - 2 Finger: Pinch-Zoom (um den Gestenmittelpunkt verankert)
- * - Mausrad: Zoom um den Cursor
- * - Tipp auf Marker: Peek im Sidepanel; Marker ziehen: verschieben
- * - Tipp auf freie Fläche: Peek schließen (bzw. Marker setzen im Setz-Modus)
+ * SVG-Canvas (M2/M3, §4.1): Pan/Zoom-Fläche mit Kartenbild, Markern,
+ * Grid-Overlay, Kind-Bereichs-Zonen (semantisches Zoomen) und Reiselinien.
  *
- * touch-action: none auf dem SVG hält WebKit davon ab, die Gesten der Seite
- * zu geben (§2 Zielgerät-Warnung). Der Live-Viewport lebt während einer Geste
- * in lokalem State (60 fps); bei Gestenende wird er in den Nav-Slice
- * committet und grob persistiert (§3.2).
+ * Gesten (Pointer Events, touch-action: none — §2 Zielgerät-Warnung):
+ * - 1 Finger / Maus ziehen: Pan · 2 Finger: Pinch-Zoom · Mausrad: Zoom
+ * - Tipp auf Marker/Zone: Peek bzw. Bereich betreten; Marker ziehen: verschieben
+ * - Tipp auf freie Fläche: Peek schließen — oder platzieren, wenn ein
+ *   Platzier-Modus aktiv ist (Marker, Bereich, Encounter aus dem Pool,
+ *   Gruppen-Wegpunkt)
+ *
+ * Semantisches Zoomen (§4.1): Kind-Bereiche erscheinen unterhalb ihres
+ * Zoomschwellwerts als verdichtetes Badge (konfigurierbar, §3.3) und blättern
+ * sich darüber zur Zone mit eigener Karte auf; Tipp betritt den Bereich.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { newId } from '../../lib/ids';
-import { gridRefLabel, normalizedToGridRef } from '../../lib/grid';
+import { columnLabel, gridRefLabel, normalizedToGridRef } from '../../lib/grid';
 import { loadViewport, saveViewport } from '../../lib/navPersistence';
-import type { GridConfig, MapImage, Marker, MarkerType } from '../../types';
-import { columnLabel } from '../../lib/grid';
-import { appendGameEvent } from '../game/thunks';
-import { selectMarkersOnMap } from '../game/selectors';
+import type { Area, GridConfig, MapImage, Marker, MarkerType } from '../../types';
+import { appendGameEvent, placeEncounter } from '../game/thunks';
 import {
-  markerPlacementToggled,
+  selectAreaStats,
+  selectChildAreas,
+  selectMarkersOnMap,
+  selectPrimaryMapImage,
+} from '../game/selectors';
+import {
+  gotoRequested,
   peeked,
   peekClosed,
+  placingChanged,
   viewportCommitted,
   type NavTarget,
   type Viewport,
 } from '../nav/navSlice';
+import { useAssetUrl } from './useAssetUrl';
 
 /** Weltbreite der Karte in Welteinheiten; Höhe folgt dem Seitenverhältnis. */
 export const WORLD_W = 1000;
@@ -62,6 +69,10 @@ function clampZoom(z: number): number {
   return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
 }
 
+function clamp01(v: number): number {
+  return Math.min(1, Math.max(0, v));
+}
+
 function dist(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -80,18 +91,19 @@ function capturePointer(el: Element, pointerId: number): void {
 }
 
 interface Props {
+  area: Area;
   mapImage: MapImage;
   imageUrl: string | undefined;
   worldH: number;
 }
 
-export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
+export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
   const dispatch = useAppDispatch();
   const campaignId = useAppSelector((s) => s.game.campaignId);
   const game = useAppSelector((s) => s.game.state);
   const flyTo = useAppSelector((s) => s.nav.flyTo);
   const gridVisible = useAppSelector((s) => s.nav.gridVisible);
-  const placingMarker = useAppSelector((s) => s.nav.placingMarker);
+  const placing = useAppSelector((s) => s.nav.placing);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -165,18 +177,21 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     };
   }, []);
 
+  // Initial-Viewport pro Bereich: zuletzt gesehener Ausschnitt oder Fit (§3.2).
+  const initializedFor = useRef<string | null>(null);
   useEffect(() => {
-    if (view || size.w === 0 || !campaignId) return;
-    // §3.2: Neustart landet im zuletzt gesehenen Ausschnitt, sonst Fit-View.
-    updateView(loadViewport(campaignId) ?? fitView());
+    if (size.w === 0 || !campaignId) return;
+    if (initializedFor.current === area.id) return;
+    initializedFor.current = area.id;
+    updateView(loadViewport(campaignId, area.id) ?? fitView());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size, campaignId, view]);
+  }, [size, campaignId, area.id]);
 
   const commitView = () => {
     const v = viewRef.current;
     if (!v || !campaignId) return;
     dispatch(viewportCommitted(v));
-    saveViewport(campaignId, v);
+    saveViewport(campaignId, area.id, v);
   };
 
   // --- Fly-To (Goto/Zurück-Leiste, §4.2/§4.3) ----------------------------
@@ -200,11 +215,12 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
       const zoom = clampZoom(Math.max(viewRef.current?.zoom ?? 1, fitView().zoom * 4));
       return { cx: marker.position.x * WORLD_W, cy: marker.position.y * worldH, zoom };
     }
+    if ('areaId' in target) return fitView(); // Bereich betreten: ganze Karte
     return target;
   };
 
   useEffect(() => {
-    if (!flyTo || flyTo.nonce === lastFlyNonce.current) return;
+    if (!flyTo || flyTo.nonce === lastFlyNonce.current || size.w === 0) return;
     lastFlyNonce.current = flyTo.nonce;
     const from = viewRef.current;
     const to = resolveTarget(flyTo.target);
@@ -238,7 +254,7 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     // Kommen keine Frames (gedrosselter/verdeckter Renderer), trotzdem ankommen:
     flyWatchdog.current = window.setTimeout(finish, FLY_MS + 150);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flyTo]);
+  }, [flyTo, size]);
 
   useEffect(() => cancelFly, []);
 
@@ -251,6 +267,8 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     panLast: Point | null;
     pinchLast: { d: number; c: Point } | null;
   }>({ moved: false, downAt: null, panLast: null, pinchLast: null });
+  /** Von einer Zone bei pointerup gesetzt; der SVG-Handler wertet es aus. */
+  const zoneTapRef = useRef<Area | null>(null);
 
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
     cancelFly();
@@ -306,14 +324,20 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
       // Von Pinch zurück zu Pan mit dem verbleibenden Finger.
       g.pinchLast = null;
       g.panLast = [...pointers.current.values()][0];
+      zoneTapRef.current = null;
       return;
     }
     if (pointers.current.size > 0) return;
 
     const v = viewRef.current;
+    const tappedZone = zoneTapRef.current;
+    zoneTapRef.current = null;
     if (!g.moved && v && e.type !== 'pointercancel') {
-      if (placingMarker) {
-        placeMarkerAt(screenToWorld(p, v));
+      if (placing) {
+        placeAt(screenToWorld(p, v));
+      } else if (tappedZone) {
+        // Tipp auf eine Zone: Bereich betreten (semantisches Zoomen, §4.1).
+        dispatch(gotoRequested({ label: tappedZone.name, target: { areaId: tappedZone.id } }));
       } else {
         dispatch(peekClosed());
       }
@@ -340,7 +364,82 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // --- Marker: setzen, ziehen, peeken -------------------------------------
+  // --- Platzieren (Marker, Bereich, Encounter, Gruppen-Wegpunkt) ----------
+
+  const placeAt = (w: Point) => {
+    if (!game || !placing) return;
+    const position = { x: clamp01(w.x / WORLD_W), y: clamp01(w.y / worldH) };
+
+    switch (placing.kind) {
+      case 'marker': {
+        const name = mapImage.grid
+          ? `Marker ${gridRefLabel(normalizedToGridRef(position, mapImage.grid))}`
+          : 'Marker';
+        const marker: Marker = {
+          id: newId(),
+          areaId: area.id,
+          mapImageId: mapImage.id,
+          position,
+          type: 'location',
+          name,
+          encounterIds: [],
+          npcIds: [],
+          questIds: [],
+        };
+        void dispatch(appendGameEvent({ type: 'marker.created', payload: { marker } }));
+        break;
+      }
+      case 'area': {
+        // Zone zentriert am Tipp-Punkt, Standardgröße; Feinjustage im Panel.
+        const child: Area = {
+          id: newId(),
+          name: 'Neuer Bereich',
+          parentId: area.id,
+          zoneOnParent: {
+            x: clamp01(position.x - 0.09),
+            y: clamp01(position.y - 0.07),
+            width: 0.18,
+            height: 0.14,
+          },
+          zoomThreshold: 1.5,
+          badge: { showQuestMarkers: true, showEncounterCount: true, showText: false },
+        };
+        void dispatch(appendGameEvent({ type: 'area.created', payload: { area: child } }))
+          .unwrap()
+          .then(() => dispatch(peeked({ kind: 'area', id: child.id })));
+        break;
+      }
+      case 'encounter':
+        void dispatch(
+          placeEncounter({
+            encounterId: placing.encounterId,
+            areaId: area.id,
+            mapImageId: mapImage.id,
+            position,
+          }),
+        );
+        break;
+      case 'group':
+        void dispatch(
+          appendGameEvent({
+            type: 'group.moved',
+            payload: {
+              groupId: placing.groupId,
+              waypoint: {
+                areaId: area.id,
+                mapImageId: mapImage.id,
+                position,
+                gameDay: game.campaign.clock.day,
+              },
+            },
+          }),
+        );
+        break;
+    }
+    dispatch(placingChanged(null));
+  };
+
+  // --- Marker: ziehen & peeken --------------------------------------------
 
   const [dragPos, setDragPos] = useState<{ id: string; wx: number; wy: number } | null>(null);
   // Weltposition lebt in der Ref (Wahrheit für pointerup); dragPos-State ist nur fürs Rendern.
@@ -353,32 +452,8 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     wy: number;
   } | null>(null);
 
-  const placeMarkerAt = (w: Point) => {
-    if (!game) return;
-    const position = {
-      x: Math.min(1, Math.max(0, w.x / WORLD_W)),
-      y: Math.min(1, Math.max(0, w.y / worldH)),
-    };
-    const name = mapImage.grid
-      ? `Marker ${gridRefLabel(normalizedToGridRef(position, mapImage.grid))}`
-      : 'Marker';
-    const marker: Marker = {
-      id: newId(),
-      areaId: mapImage.areaId,
-      mapImageId: mapImage.id,
-      position,
-      type: 'location',
-      name,
-      encounterIds: [],
-      npcIds: [],
-      questIds: [],
-    };
-    void dispatch(appendGameEvent({ type: 'marker.created', payload: { marker } }));
-    dispatch(markerPlacementToggled());
-  };
-
   const onMarkerPointerDown = (e: React.PointerEvent<SVGGElement>, m: Marker) => {
-    if (placingMarker) return; // im Setz-Modus zählt der Tipp als Kartenposition
+    if (placing) return; // im Platzier-Modus zählt der Tipp als Kartenposition
     e.stopPropagation();
     cancelFly();
     capturePointer(e.currentTarget, e.pointerId);
@@ -411,10 +486,7 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     markerDrag.current = null;
     e.stopPropagation();
     if (d.moved) {
-      const position = {
-        x: Math.min(1, Math.max(0, d.wx / WORLD_W)),
-        y: Math.min(1, Math.max(0, d.wy / worldH)),
-      };
+      const position = { x: clamp01(d.wx / WORLD_W), y: clamp01(d.wy / worldH) };
       void dispatch(
         appendGameEvent({ type: 'marker.moved', payload: { markerId: m.id, position } }),
       );
@@ -427,7 +499,12 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
 
   // --- Rendering -----------------------------------------------------------
 
-  const markers = game ? selectMarkersOnMap(game, mapImage.areaId, mapImage.id, true) : [];
+  const markers = game ? selectMarkersOnMap(game, area.id, mapImage.id, true) : [];
+  const childAreas = game
+    ? selectChildAreas(game, area.id).filter((a) => a.zoneOnParent)
+    : [];
+  const groups = game ? Object.values(game.groups) : [];
+
   const v = view ?? { cx: WORLD_W / 2, cy: worldH / 2, zoom: 1 };
   const viewBox = `${v.cx - size.w / 2 / v.zoom} ${v.cy - size.h / 2 / v.zoom} ${
     Math.max(1, size.w) / v.zoom
@@ -437,7 +514,7 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
     <div ref={containerRef} className="canvas-root">
       <svg
         ref={svgRef}
-        className={placingMarker ? 'canvas placing' : 'canvas'}
+        className={placing ? 'canvas placing' : 'canvas'}
         viewBox={viewBox}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -454,9 +531,24 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
             preserveAspectRatio="none"
           />
         )}
-        {gridVisible && mapImage.grid && (
-          <GridOverlay grid={mapImage.grid} w={WORLD_W} h={worldH} />
-        )}
+        {gridVisible && mapImage.grid && <GridOverlay grid={mapImage.grid} w={WORLD_W} h={worldH} />}
+
+        {childAreas.map((child) => (
+          <AreaZone
+            key={child.id}
+            area={child}
+            zoom={v.zoom}
+            worldH={worldH}
+            onTapStart={() => {
+              zoneTapRef.current = child;
+            }}
+          />
+        ))}
+
+        {groups.map((g) => (
+          <TravelLine key={g.id} waypoints={g.waypoints} areaId={area.id} zoom={v.zoom} worldH={worldH} />
+        ))}
+
         {markers.map((m) => {
           const wx = dragPos?.id === m.id ? dragPos.wx : m.position.x * WORLD_W;
           const wy = dragPos?.id === m.id ? dragPos.wy : m.position.y * worldH;
@@ -483,6 +575,135 @@ export function CanvasView({ mapImage, imageUrl, worldH }: Props) {
         })}
       </svg>
     </div>
+  );
+}
+
+/**
+ * Zone eines Kind-Bereichs (§4.1): unterhalb des Zoomschwellwerts nur das
+ * konfigurierte Badge, darüber "aufgeblättert" — Zonenrahmen mit eigener
+ * Karte, falls vorhanden. Tipp betritt den Bereich (via zoneTapRef im Parent).
+ */
+function AreaZone({
+  area,
+  zoom,
+  worldH,
+  onTapStart,
+}: {
+  area: Area;
+  zoom: number;
+  worldH: number;
+  onTapStart: () => void;
+}) {
+  const game = useAppSelector((s) => s.game.state);
+  const zone = area.zoneOnParent;
+  const childMap = game ? selectPrimaryMapImage(game, area.id) : undefined;
+  const childMapUrl = useAssetUrl(childMap?.assetId);
+  if (!zone || !game) return null;
+
+  const x = zone.x * WORLD_W;
+  const y = zone.y * worldH;
+  const w = zone.width * WORLD_W;
+  const h = zone.height * worldH;
+  const unfolded = zoom >= area.zoomThreshold;
+  const stats = selectAreaStats(game, area.id);
+  const badgeLines: string[] = [];
+  if (area.badge.showEncounterCount && stats.encounterCount > 0) {
+    badgeLines.push(`${stats.encounterCount} Encounter`);
+  }
+  if (area.badge.showQuestMarkers && stats.openQuestCount > 0) {
+    badgeLines.push(`${stats.openQuestCount} Quests`);
+  }
+  if (area.badge.showText && area.badge.text) badgeLines.push(area.badge.text);
+
+  return (
+    <g className="area-zone" onPointerUp={onTapStart}>
+      {unfolded ? (
+        <>
+          {childMapUrl && (
+            <image
+              href={childMapUrl}
+              x={x}
+              y={y}
+              width={w}
+              height={h}
+              preserveAspectRatio="none"
+              opacity={0.95}
+            />
+          )}
+          <rect x={x} y={y} width={w} height={h} className="zone-rect unfolded" />
+          <g transform={`translate(${x} ${y}) scale(${1 / zoom})`}>
+            <text x={8} y={18} className="zone-name">
+              {area.name}
+            </text>
+          </g>
+        </>
+      ) : (
+        <>
+          <rect x={x} y={y} width={w} height={h} className="zone-rect" />
+          <g transform={`translate(${x + w / 2} ${y + h / 2}) scale(${1 / zoom})`}>
+            <BadgeChip name={area.name} lines={badgeLines} />
+          </g>
+        </>
+      )}
+    </g>
+  );
+}
+
+/** Verdichtetes Badge (§3.3): Name + konfigurierte Zusatzinfos, screen-fixiert. */
+function BadgeChip({ name, lines }: { name: string; lines: string[] }) {
+  const width = Math.max(name.length, ...lines.map((l) => l.length), 8) * 7.5 + 24;
+  const height = 26 + lines.length * 16;
+  return (
+    <g className="badge-chip">
+      <rect
+        x={-width / 2}
+        y={-height / 2}
+        width={width}
+        height={height}
+        rx={10}
+        className="badge-bg"
+      />
+      <text y={-height / 2 + 18} textAnchor="middle" className="badge-name">
+        {name}
+      </text>
+      {lines.map((line, i) => (
+        <text key={i} y={-height / 2 + 34 + i * 16} textAnchor="middle" className="badge-line">
+          {line}
+        </text>
+      ))}
+    </g>
+  );
+}
+
+/** Reiselinie einer Gruppe (§3.3): Wegpunkte im aktuellen Bereich, Tag pro Punkt. */
+function TravelLine({
+  waypoints,
+  areaId,
+  zoom,
+  worldH,
+}: {
+  waypoints: { areaId: string; position: { x: number; y: number }; gameDay: number }[];
+  areaId: string;
+  zoom: number;
+  worldH: number;
+}) {
+  const here = waypoints.filter((wp) => wp.areaId === areaId);
+  if (here.length === 0) return null;
+  const pts = here.map((wp) => ({ x: wp.position.x * WORLD_W, y: wp.position.y * worldH }));
+  return (
+    <g className="travel" pointerEvents="none">
+      {pts.length > 1 && (
+        <polyline points={pts.map((p) => `${p.x},${p.y}`).join(' ')} className="travel-line" />
+      )}
+      {pts.map((p, i) => (
+        <g key={i} transform={`translate(${p.x} ${p.y}) scale(${1 / zoom})`}>
+          <circle r={i === pts.length - 1 ? 9 : 6} className="travel-point" />
+          <text y={-12} textAnchor="middle" className="travel-day">
+            Tag {here[i].gameDay}
+          </text>
+        </g>
+      ))}
+    </g>
   );
 }
 

@@ -381,3 +381,405 @@ svg.canvas.placing {
   flex-direction: column;
   gap: 6px;
 }
+
+/* --- Zonen & Badges (semantisches Zoomen, §4.1) --- */
+
+.zone-rect {
+  fill: rgba(110, 168, 254, 0.08);
+  stroke: rgba(110, 168, 254, 0.55);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+
+.zone-rect.unfolded {
+  fill: none;
+  stroke-dasharray: none;
+}
+
+.zone-name {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--accent);
+  paint-order: stroke;
+  stroke: #0f1115;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+.badge-chip {
+  cursor: pointer;
+}
+
+.badge-bg {
+  fill: rgba(26, 30, 38, 0.92);
+  stroke: rgba(110, 168, 254, 0.55);
+  stroke-width: 1;
+}
+
+.badge-name {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--text);
+  pointer-events: none;
+}
+
+.badge-line {
+  font-size: 11px;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+/* --- Reiselinie (§3.3 Group) --- */
+
+.travel-line {
+  fill: none;
+  stroke: #e3b341;
+  stroke-width: 2;
+  stroke-dasharray: 8 5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.85;
+}
+
+.travel-point {
+  fill: #e3b341;
+  stroke: #0f1115;
+  stroke-width: 2;
+}
+
+.travel-day {
+  font-size: 11px;
+  fill: #e3b341;
+  paint-order: stroke;
+  stroke: #0f1115;
+  stroke-width: 3px;
+}
+
+/* --- Platzier-Hinweisleiste --- */
+
+.placing-bar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 999px;
+  background: rgba(110, 168, 254, 0.16);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  z-index: 5;
+  max-width: calc(100% - 24px);
+}
+
+.placing-bar button {
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* --- Bibliotheks-Panel (Dock, §4.1) --- */
+
+.topbar-dock {
+  flex-shrink: 0;
+}
+
+.topbar-dock.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.dock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(300px, 80vw);
+  background: var(--bg-raised);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 4;
+}
+
+.dock-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.dock-tabs button {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dock-tabs button.active {
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.dock-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+
+.dock-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 12px;
+}
+
+.dock-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dock-new {
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-prepared {
+  border: 2px solid var(--accent);
+  background: transparent;
+}
+
+.dot-active {
+  background: #ff7b72;
+}
+
+.dot-completed {
+  background: var(--text-muted);
+}
+
+/* --- Panel-Bausteine (M3) --- */
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.field span {
+  flex-shrink: 0;
+}
+
+.field input,
+.field select {
+  flex: 1;
+  min-width: 0;
+}
+
+.field-number input {
+  width: 76px;
+  flex: 0 0 auto;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.sidepanel select,
+.sidepanel textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.sidepanel textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.sidepanel input[type='number'],
+.sidepanel input[type='text'] {
+  background: var(--bg);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 4px 2px 2px;
+}
+
+.chip-label {
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 999px;
+  text-align: left;
+}
+
+.chip-remove {
+  border: none;
+  background: transparent;
+  padding: 6px 8px;
+  color: var(--text-muted);
+}
+
+.link-adder {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.segmented {
+  display: flex;
+  gap: 0;
+}
+
+.segmented button {
+  flex: 1;
+  border-radius: 0;
+}
+
+.segmented button:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.segmented button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(110, 168, 254, 0.12);
+}
+
+.enemy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.enemy-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-add {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tag-add input {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.sheet.deactivated {
+  opacity: 0.55;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sheet-actions button {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.zone-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* --- Overlay (Battlemap-Viewer) --- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 50;
+  cursor: pointer;
+}
+
+.overlay img {
+  max-width: 96vw;
+  max-height: 88vh;
+  object-fit: contain;
+}

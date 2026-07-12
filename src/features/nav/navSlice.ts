@@ -2,17 +2,11 @@
  * Navigation-Slice (§3.2): Session-flüchtiger UI-Zustand, strikt getrennt vom
  * event-sourced Game-State.
  *
- * Kernstücke ab M2:
- * - viewport: zuletzt bestätigter Kartenausschnitt (bei Gestenende committet;
- *   grob nach localStorage persistiert für den Restore)
- * - stack: Navigationsstack der Goto-Sprünge; die Zurück-Leiste bietet
- *   mehrere Ebenen gleichzeitig an (§4.3). Basis-Ebene "Übersicht" ist
- *   implizit immer da (Fit-View).
- * - peek: im Sidepanel geöffnete Entität — verändert den Viewport NICHT und
- *   landet NICHT im Stack (§3.2); erst die Goto-Aktion springt und pusht.
- * - flyTo: Auftrag an das Canvas, animiert zu einem Ziel zu zoomen. Ziele
- *   werden erst im Canvas aufgelöst (Fit braucht Containermaße, Marker können
- *   sich bewegt haben) — deshalb kein fertiger Viewport im Stack.
+ * Ab M3 kommt die Bereichs-Navigation dazu: currentAreaId bestimmt, welcher
+ * Bereich auf dem Canvas liegt (null = Wurzelbereich "Übersicht"). Goto-Ziele
+ * tragen ihren Bereich mit, damit ein Sprung zu einem Marker in einer anderen
+ * Karte zuerst den Bereich wechselt. Der Peek im Sidepanel bleibt ohne
+ * Viewport- und Stack-Wirkung (§3.2).
  */
 
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
@@ -27,36 +21,72 @@ export interface Viewport {
 }
 
 /** Navigationsziel; Auflösung zum konkreten Viewport passiert im Canvas. */
-export type NavTarget = 'fit' | { markerId: string } | Viewport;
+export type NavTarget =
+  | 'fit'
+  | { markerId: string; areaId: string }
+  | { areaId: string }
+  | Viewport;
 
 export interface NavStackEntry {
   label: string;
   target: NavTarget;
 }
 
-export type PeekTarget = { kind: 'marker'; id: string };
+export type PeekKind =
+  | 'marker'
+  | 'encounter'
+  | 'npc'
+  | 'quest'
+  | 'character'
+  | 'group'
+  | 'area';
+
+export interface PeekTarget {
+  kind: PeekKind;
+  id: string;
+}
+
+/** Aktiver Platzier-Modus: der nächste Tipp aufs Canvas setzt etwas. */
+export type PlacingMode =
+  | { kind: 'marker' }
+  | { kind: 'area' }
+  | { kind: 'encounter'; encounterId: string }
+  | { kind: 'group'; groupId: string }
+  | null;
 
 export interface NavSliceState {
   screen: 'selector' | 'campaign';
+  /** null = Wurzelbereich. */
+  currentAreaId: string | null;
   viewport: Viewport | null;
   stack: NavStackEntry[];
   peek: PeekTarget | null;
   flyTo: { target: NavTarget; nonce: number } | null;
   gridVisible: boolean;
-  placingMarker: boolean;
+  placing: PlacingMode;
+  /** Bibliotheks-Panel (Encounter/Quests/NSCs/Gruppe) ein-/ausgeklappt (§4.1). */
+  dockOpen: boolean;
 }
 
 const initialState: NavSliceState = {
   screen: 'selector',
+  currentAreaId: null,
   viewport: null,
   stack: [],
   peek: null,
   flyTo: null,
   gridVisible: true,
-  placingMarker: false,
+  placing: null,
+  dockOpen: false,
 };
 
 let flyNonce = 0;
+
+function areaOfTarget(target: NavTarget): string | null | undefined {
+  if (target === 'fit') return null;
+  if (typeof target === 'object' && 'areaId' in target) return target.areaId;
+  return undefined; // reiner Viewport: Bereich unverändert
+}
 
 const navSlice = createSlice({
   name: 'nav',
@@ -69,8 +99,11 @@ const navSlice = createSlice({
     gridToggled(s) {
       s.gridVisible = !s.gridVisible;
     },
-    markerPlacementToggled(s) {
-      s.placingMarker = !s.placingMarker;
+    dockToggled(s) {
+      s.dockOpen = !s.dockOpen;
+    },
+    placingChanged(s, action: PayloadAction<PlacingMode>) {
+      s.placing = action.payload;
     },
     /** Peek im Sidepanel — bewusst ohne Viewport- oder Stack-Wirkung (§3.2). */
     peeked(s, action: PayloadAction<PeekTarget>) {
@@ -82,19 +115,24 @@ const navSlice = createSlice({
     /** Goto (§4.2): animierter Sprung, landet als Ebene im Navigationsstack. */
     gotoRequested(s, action: PayloadAction<NavStackEntry>) {
       s.stack.push(action.payload);
+      const area = areaOfTarget(action.payload.target);
+      if (area !== undefined) s.currentAreaId = area;
       s.flyTo = { target: action.payload.target, nonce: ++flyNonce };
-      s.placingMarker = false;
+      s.placing = null;
     },
     /** Zurück-Leiste: zu einer früheren Ebene springen (Schrittwahl, §4.3). */
     jumpedBackTo(s, action: PayloadAction<number>) {
       const entry = s.stack[action.payload];
       if (!entry) return;
       s.stack = s.stack.slice(0, action.payload + 1);
+      const area = areaOfTarget(entry.target);
+      if (area !== undefined) s.currentAreaId = area;
       s.flyTo = { target: entry.target, nonce: ++flyNonce };
     },
-    /** Basis-Ebene: ganze Karte (Fit-View), Stack wird geleert. */
+    /** Basis-Ebene: Wurzelkarte (Fit-View), Stack wird geleert. */
     overviewRequested(s) {
       s.stack = [];
+      s.currentAreaId = null;
       s.flyTo = { target: 'fit', nonce: ++flyNonce };
     },
   },
@@ -111,7 +149,8 @@ const navSlice = createSlice({
 export const {
   viewportCommitted,
   gridToggled,
-  markerPlacementToggled,
+  dockToggled,
+  placingChanged,
   peeked,
   peekClosed,
   gotoRequested,
