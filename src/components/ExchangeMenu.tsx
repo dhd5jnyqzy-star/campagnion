@@ -13,7 +13,11 @@ import {
   planPackageImport,
   type ConflictResolution,
 } from '../features/exchange/packageCore';
-import { parsePackageFile, type ParsedPackage } from '../features/exchange/packageIo';
+import {
+  parsePackageFile,
+  parsePackageText,
+  type ParsedPackage,
+} from '../features/exchange/packageIo';
 import { applyContentPackage } from '../features/game/thunks';
 import { downloadBlob, downloadJson, slugify } from '../lib/download';
 import { formatBytes, getStorageInfo, type StorageInfo } from '../lib/storageInfo';
@@ -178,18 +182,75 @@ function PackageImportDialog({ state, onClose }: { state: GameState; onClose: ()
   const [resolutions, setResolutions] = useState<Record<string, ConflictResolution>>({});
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pasteText, setPasteText] = useState('');
+  // Ist ein beigelegtes Paket neben der App abrufbar? (fürs Ein-Tipp-Laden)
+  const [bundledUrl, setBundledUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Relativ zum App-Basispfad (z. B. /campagnion/blauwasser-paket.json).
+    const url = new URL('blauwasser-paket.json', document.baseURI).href;
+    let cancelled = false;
+    void fetch(url, { method: 'HEAD' })
+      .then((r) => {
+        if (!cancelled && r.ok) setBundledUrl(url);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /** Ein geparstes Paket übernehmen: Konflikte prüfen, Standard = Vorhandenes nutzen. */
+  const accept = (p: ParsedPackage) => {
+    setParsed(p);
+    const found = findPackageConflicts(state, p.pkg);
+    setConflicts(found);
+    setResolutions(Object.fromEntries(found.map((c) => [c.id, 'skip' as const])));
+  };
 
   const onFile = async (file: File) => {
     setError(null);
     try {
-      const p = await parsePackageFile(file);
-      setParsed(p);
-      const found = findPackageConflicts(state, p.pkg);
-      setConflicts(found);
-      // Standard: Vorhandenes weiterverwenden — additiv und verlustfrei.
-      setResolutions(Object.fromEntries(found.map((c) => [c.id, 'skip' as const])));
+      accept(await parsePackageFile(file));
     } catch (err) {
       setError((err as Error).message);
+    }
+  };
+
+  /** Import aus eingefügtem Text (Zwischenablage) — ohne Datei-Umweg. */
+  const onText = (text: string) => {
+    setError(null);
+    try {
+      accept(parsePackageText(text));
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
+  /** Zwischenablage direkt lesen (Secure Context nötig; sonst manuell einfügen). */
+  const pasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setPasteText(text);
+      onText(text);
+    } catch {
+      setError('Zwischenablage nicht lesbar — bitte den Text unten manuell einfügen.');
+    }
+  };
+
+  /** Beigelegtes Paket direkt von der Seite laden (ein Tipp, keine Datei). */
+  const loadBundled = async () => {
+    if (!bundledUrl) return;
+    setError(null);
+    setBusy(true);
+    try {
+      const resp = await fetch(bundledUrl);
+      if (!resp.ok) throw new Error(`Konnte Paket nicht laden (${resp.status}).`);
+      accept(parsePackageText(await resp.text()));
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -239,10 +300,30 @@ function PackageImportDialog({ state, onClose }: { state: GameState; onClose: ()
       {!parsed ? (
         <>
           <p className="muted">
-            ContentPackage als JSON oder ZIP — z. B. eine KI-gelieferte Vorbereitung oder ein
-            Teilexport aus einer anderen Kampagne. Der Import ist additiv.
+            ContentPackage als JSON — z. B. eine KI-gelieferte Vorbereitung oder ein Teilexport.
+            Der Import ist additiv.
           </p>
-          <button onClick={() => fileRef.current?.click()}>Datei wählen …</button>
+          {bundledUrl && (
+            <button className="sidepanel-goto" disabled={busy} onClick={() => void loadBundled()}>
+              Beigelegtes Blauwasser-Paket laden
+            </button>
+          )}
+          <label className="field" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+            <span>JSON hier einfügen (aus Zwischenablage):</span>
+            <textarea
+              rows={4}
+              placeholder='{ "formatVersion": 1, "name": … }'
+              value={pasteText}
+              onChange={(e) => setPasteText(e.target.value)}
+            />
+          </label>
+          <div className="panel-actions">
+            <button onClick={() => void pasteFromClipboard()}>Aus Zwischenablage</button>
+            <button disabled={!pasteText.trim()} onClick={() => onText(pasteText)}>
+              Aus Text importieren
+            </button>
+            <button onClick={() => fileRef.current?.click()}>Datei wählen …</button>
+          </div>
         </>
       ) : (
         <>

@@ -27,6 +27,23 @@ function validate(pkg: ContentPackage): ContentPackage {
   return pkg;
 }
 
+/**
+ * Paket aus eingefügtem/geladenem JSON-Text (kein Datei-Umweg — hilft auf iOS,
+ * wo Safari .json unhandlich als .json.txt speichert). ZIP-Pakete mit Assets
+ * gehen weiterhin nur über die Datei-Variante.
+ */
+export function parsePackageText(text: string): ParsedPackage {
+  const trimmed = text.trim();
+  if (!trimmed) throw new Error('Kein Text eingefügt.');
+  let raw: unknown;
+  try {
+    raw = JSON.parse(trimmed);
+  } catch {
+    throw new Error('Das ist kein gültiges JSON — bitte den kompletten Text einfügen.');
+  }
+  return { pkg: validate(raw as ContentPackage), blobs: new Map() };
+}
+
 export async function parsePackageFile(file: File): Promise<ParsedPackage> {
   const isZip =
     file.type === 'application/zip' ||
