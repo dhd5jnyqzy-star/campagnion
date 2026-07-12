@@ -323,6 +323,123 @@ export const uploadSheet = createAsyncThunk(
   },
 );
 
+/**
+ * Session beenden (§3.3 Session): session.ended-Event + Auto-Snapshot an der
+ * Sessionsgrenze (§5) — App-Start lädt dann Snapshot + Log-Rest statt des
+ * ganzen Logs (Edge Case 8).
+ */
+export const endSession = createAsyncThunk(
+  'game/endSession',
+  async (_: void, thunkApi): Promise<AppendResult> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    if (!game.activeSessionId) throw new Error('Keine Session aktiv');
+    const session = game.sessions[game.activeSessionId];
+    const result = await persistEvent(campaignId, game, {
+      type: 'session.ended',
+      payload: { sessionId: game.activeSessionId },
+    });
+    const after = applyEvent(game, result.event);
+    if (after) {
+      await getCurrentStore().saveSnapshot(
+        {
+          campaignId,
+          lastEventId: result.event.id,
+          takenAt: nowIso(),
+          label: `Ende ${session?.name ?? 'Session'}`,
+          state: after,
+        },
+        result.seq,
+      );
+    }
+    return result;
+  },
+);
+
+/** Kontext fürs Undo (§3.2): "Undo im Encounter wirkt auf letzte Aktion dort". */
+export type UndoScope = { scope: 'all' } | { scope: 'encounter'; encounterId: string };
+
+function eventMatchesScope(e: GameEvent, scope: UndoScope): boolean {
+  if (scope.scope === 'all') return true;
+  const id = scope.encounterId;
+  switch (e.type) {
+    case 'combat.started':
+    case 'combat.enemyAdded':
+    case 'combat.initiativeSet':
+    case 'combat.turnAdvanced':
+    case 'combat.hpChanged':
+    case 'combat.defeatToggled':
+    case 'combat.ended':
+    case 'encounter.updated':
+    case 'encounter.placed':
+    case 'encounter.completed':
+      return e.payload.encounterId === id;
+    case 'statusEffect.added':
+    case 'statusEffect.removed':
+      return e.payload.target.kind === 'enemy' && e.payload.target.encounterId === id;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Kontextbezogenes Undo (§3.1/§3.2): nimmt das letzte noch wirksame Event im
+ * Kontext per Korrektur-Event (event.revoked) zurück — nichts wird gelöscht,
+ * der Replay rechnet die Rücknahme ein.
+ */
+export const undoLastEvent = createAsyncThunk(
+  'game/undoLastEvent',
+  async (args: UndoScope & { reason?: string }, thunkApi): Promise<AppendResult> => {
+    const { campaignId, game } = requireOpenGame(thunkApi.getState());
+    const stored = await getCurrentStore().getEventsAfter(0);
+    const alreadyRevoked = new Set(
+      stored
+        .filter(({ event }) => event.type === 'event.revoked' && event.revokes)
+        .map(({ event }) => event.revokes as string),
+    );
+    const candidates = stored.filter(
+      ({ event }) =>
+        event.type !== 'event.revoked' &&
+        event.type !== 'campaign.created' &&
+        event.amends === undefined &&
+        !alreadyRevoked.has(event.id) &&
+        eventMatchesScope(event, args),
+    );
+    const target = candidates[candidates.length - 1];
+    if (!target) throw new Error('Nichts zum Zurücknehmen');
+    return persistEvent(campaignId, game, {
+      type: 'event.revoked',
+      payload: { reason: args.reason },
+      revokes: target.event.id,
+    });
+  },
+);
+
+/**
+ * History-Zeitregler (§3.4): den Log bis zu einem Schnitt abspielen —
+ * nach Spielwelt-Tag (Filter auf gameTime) oder bis zum Ende einer Session
+ * (Schnitt in Log-Reihenfolge). Beides sind nur Sichten auf denselben Log.
+ */
+export const viewHistory = createAsyncThunk(
+  'game/viewHistory',
+  async (
+    args: { mode: 'day'; day: number } | { mode: 'session'; sessionId: string },
+    thunkApi,
+  ): Promise<{ state: GameState | null; label: string }> => {
+    const { game } = requireOpenGame(thunkApi.getState());
+    const all = (await getCurrentStore().getEventsAfter(0)).map(({ event }) => event);
+    if (args.mode === 'day') {
+      const events = all.filter((e) => e.gameTime.day <= args.day);
+      return { state: replay(events), label: `Ende Tag ${args.day}` };
+    }
+    const endIdx = all.findIndex(
+      (e) => e.type === 'session.ended' && e.payload.sessionId === args.sessionId,
+    );
+    const events = endIdx >= 0 ? all.slice(0, endIdx + 1) : all;
+    const name = game.sessions[args.sessionId]?.name ?? 'Session';
+    return { state: replay(events), label: `Ende ${name}` };
+  },
+);
+
 /** Battlemap-Bild an einen Encounter hängen (§3.3 Encounter). */
 export const addBattlemap = createAsyncThunk(
   'game/addBattlemap',

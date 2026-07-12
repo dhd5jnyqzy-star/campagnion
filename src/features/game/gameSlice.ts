@@ -3,9 +3,11 @@
  *
  * Hält ausschließlich den aus dem Event-Log berechneten GameState plus
  * Lade-Metadaten. Der Log selbst lebt in IndexedDB (persistence/db.ts) und
- * wird nicht im Redux-State gespiegelt — Timeline-Ansichten (M4) lesen ihn
- * direkt aus der DB. Mutationen laufen nie über eigene Reducer, sondern
- * ausschließlich über appendGameEvent (persistieren → einrechnen).
+ * wird nicht im Redux-State gespiegelt. Mutationen laufen nie über eigene
+ * Reducer, sondern ausschließlich über die Thunks (persistieren → einrechnen).
+ *
+ * historyState (M4, §3.4): eine Vergangenheits-Sicht aus dem History-
+ * Zeitregler — reine Anzeige, niemals Ziel von Mutationen; null = Gegenwart.
  */
 
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
@@ -15,13 +17,18 @@ import {
   addBattlemap,
   appendGameEvent,
   createCampaign,
+  endSession,
   importMapImage,
   openCampaign,
   placeEncounter,
+  undoLastEvent,
   uploadSheet,
+  viewHistory,
   type AppendResult,
 } from './thunks';
 
+/** Thunks mit einem einzelnen AppendResult (können Korrektur-Replays tragen). */
+const singleThunks = [appendGameEvent, endSession, undoLastEvent] as const;
 /** Thunks, die einen Batch von AppendResults liefern (nie Korrektur-Events). */
 const batchThunks = [importMapImage, placeEncounter, uploadSheet, addBattlemap] as const;
 
@@ -31,6 +38,9 @@ export interface GameSliceState {
   state: GameState | null;
   /** Log-Sequenznummer des letzten eingerechneten Events. */
   lastSeq: number;
+  /** Vergangenheits-Sicht des History-Zeitreglers; null = Gegenwart. */
+  historyState: GameState | null;
+  historyLabel: string | null;
   status: 'idle' | 'loading' | 'ready' | 'error';
   error: string | null;
 }
@@ -39,6 +49,8 @@ const initialState: GameSliceState = {
   campaignId: null,
   state: null,
   lastSeq: 0,
+  historyState: null,
+  historyLabel: null,
   status: 'idle',
   error: null,
 };
@@ -51,10 +63,19 @@ const gameSlice = createSlice({
     campaignClosed() {
       return initialState;
     },
+    /** History-Zeitregler verlassen: zurück in die Gegenwart. */
+    historyExited(s) {
+      s.historyState = null;
+      s.historyLabel = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(appendGameEvent.fulfilled, (s, action) => {
+      .addCase(viewHistory.fulfilled, (s, action) => {
+        s.historyState = action.payload.state;
+        s.historyLabel = action.payload.label;
+      })
+      .addMatcher(isAnyOf(...singleThunks.map((t) => t.fulfilled)), (s, action) => {
         const { seq, event, replaced } = action.payload;
         s.lastSeq = seq;
         // Korrektur-Events erzwingen vollen Replay; alles andere wird live eingerechnet.
@@ -74,16 +95,21 @@ const gameSlice = createSlice({
         s.campaignId = action.payload.campaignId;
         s.state = action.payload.state;
         s.lastSeq = action.payload.lastSeq;
+        s.historyState = null;
+        s.historyLabel = null;
         s.status = 'ready';
       })
       .addMatcher(
         isAnyOf(
           createCampaign.rejected,
           openCampaign.rejected,
-          appendGameEvent.rejected,
+          viewHistory.rejected,
+          ...singleThunks.map((t) => t.rejected),
           ...batchThunks.map((t) => t.rejected),
         ),
         (s, action) => {
+          // "Nichts zum Zurücknehmen" ist kein App-Fehler, nur ein No-Op.
+          if (undoLastEvent.rejected.match(action)) return;
           s.status = 'error';
           s.error = action.error.message ?? 'Unbekannter Fehler';
         },
@@ -91,5 +117,5 @@ const gameSlice = createSlice({
   },
 });
 
-export const { campaignClosed } = gameSlice.actions;
+export const { campaignClosed, historyExited } = gameSlice.actions;
 export default gameSlice.reducer;

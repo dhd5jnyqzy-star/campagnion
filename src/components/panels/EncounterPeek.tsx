@@ -7,12 +7,13 @@
 
 import { useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useAssetUrl } from '../../features/canvas/useAssetUrl';
+import { buildInitialCombatants } from '../../features/combat/combatLogic';
 import { selectQuestsForEncounter } from '../../features/game/selectors';
 import { addBattlemap, appendGameEvent } from '../../features/game/thunks';
-import { gotoRequested, peekClosed, placingChanged } from '../../features/nav/navSlice';
+import { combatOpened, gotoRequested, peekClosed, placingChanged } from '../../features/nav/navSlice';
 import { newId } from '../../lib/ids';
 import type { Encounter, Enemy } from '../../types';
+import { BattlemapViewer } from '../BattlemapViewer';
 import { Chips, NumberField, PanelHead, Section, TextField } from './common';
 
 const STATE_LABELS: Record<Encounter['state'], string> = {
@@ -60,6 +61,18 @@ export function EncounterPeek({ encounter }: { encounter: Encounter }) {
     setNewEnemy({ name: '', count: 1, maxHp: 10 });
   };
 
+  const startCombat = () => {
+    if (!game) return;
+    void dispatch(
+      appendGameEvent({
+        type: 'combat.started',
+        payload: { encounterId: encounter.id, combatants: buildInitialCombatants(game, encounter) },
+      }),
+    )
+      .unwrap()
+      .then(() => dispatch(combatOpened(encounter.id)));
+  };
+
   return (
     <>
       <PanelHead name={encounter.name} onCommitName={(name) => update({ name })} />
@@ -67,6 +80,17 @@ export function EncounterPeek({ encounter }: { encounter: Encounter }) {
         Zustand: {STATE_LABELS[encounter.state]}
         {marker ? '' : encounter.state === 'completed' ? '' : ' · im Random-Pool'}
       </p>
+
+      {encounter.state === 'prepared' && (
+        <button className="combat-start" onClick={startCombat}>
+          ⚔ Kampf starten
+        </button>
+      )}
+      {encounter.state === 'active' && encounter.combat && (
+        <button className="combat-start" onClick={() => dispatch(combatOpened(encounter.id))}>
+          ⚔ Zum Kampf (Runde {encounter.combat.round})
+        </button>
+      )}
 
       <TextField
         multiline
@@ -211,16 +235,5 @@ export function EncounterPeek({ encounter }: { encounter: Encounter }) {
 
       {viewAssetId && <BattlemapViewer assetId={viewAssetId} onClose={() => setViewAssetId(null)} />}
     </>
-  );
-}
-
-/** Simpler Vollbild-Viewer für Battlemaps; die Kampf-Ansicht kommt in M4. */
-function BattlemapViewer({ assetId, onClose }: { assetId: string; onClose: () => void }) {
-  const url = useAssetUrl(assetId);
-  return (
-    <div className="overlay" onClick={onClose}>
-      {url && <img src={url} alt="Battlemap" />}
-      <p className="muted">Tippen zum Schließen</p>
-    </div>
   );
 }

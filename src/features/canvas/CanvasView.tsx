@@ -100,7 +100,9 @@ interface Props {
 export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
   const dispatch = useAppDispatch();
   const campaignId = useAppSelector((s) => s.game.campaignId);
-  const game = useAppSelector((s) => s.game.state);
+  // History-Zeitregler (§3.4): aktive Vergangenheits-Sicht rendern, dann read-only.
+  const game = useAppSelector((s) => s.game.historyState ?? s.game.state);
+  const readOnly = useAppSelector((s) => s.game.historyState !== null);
   const flyTo = useAppSelector((s) => s.nav.flyTo);
   const gridVisible = useAppSelector((s) => s.nav.gridVisible);
   const placing = useAppSelector((s) => s.nav.placing);
@@ -367,7 +369,7 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
   // --- Platzieren (Marker, Bereich, Encounter, Gruppen-Wegpunkt) ----------
 
   const placeAt = (w: Point) => {
-    if (!game || !placing) return;
+    if (!game || !placing || readOnly) return;
     const position = { x: clamp01(w.x / WORLD_W), y: clamp01(w.y / worldH) };
 
     switch (placing.kind) {
@@ -453,7 +455,7 @@ export function CanvasView({ area, mapImage, imageUrl, worldH }: Props) {
   } | null>(null);
 
   const onMarkerPointerDown = (e: React.PointerEvent<SVGGElement>, m: Marker) => {
-    if (placing) return; // im Platzier-Modus zählt der Tipp als Kartenposition
+    if (placing || readOnly) return; // im Platzier-Modus zählt der Tipp als Kartenposition
     e.stopPropagation();
     cancelFly();
     capturePointer(e.currentTarget, e.pointerId);
@@ -594,7 +596,7 @@ function AreaZone({
   worldH: number;
   onTapStart: () => void;
 }) {
-  const game = useAppSelector((s) => s.game.state);
+  const game = useAppSelector((s) => s.game.historyState ?? s.game.state);
   const zone = area.zoneOnParent;
   const childMap = game ? selectPrimaryMapImage(game, area.id) : undefined;
   const childMapUrl = useAssetUrl(childMap?.assetId);

@@ -66,6 +66,12 @@ export interface NavSliceState {
   placing: PlacingMode;
   /** Bibliotheks-Panel (Encounter/Quests/NSCs/Gruppe) ein-/ausgeklappt (§4.1). */
   dockOpen: boolean;
+  /**
+   * Geöffneter Kampfbildschirm (§4.4). Der Kampf-ZUSTAND lebt am Encounter —
+   * hier steht nur, welcher Kampf gerade angezeigt wird; parallele Kämpfe
+   * laufen weiter und sind per Navigation erreichbar.
+   */
+  combatEncounterId: string | null;
 }
 
 const initialState: NavSliceState = {
@@ -78,6 +84,7 @@ const initialState: NavSliceState = {
   gridVisible: true,
   placing: null,
   dockOpen: false,
+  combatEncounterId: null,
 };
 
 let flyNonce = 0;
@@ -111,6 +118,14 @@ const navSlice = createSlice({
     },
     peekClosed(s) {
       s.peek = null;
+    },
+    combatOpened(s, action: PayloadAction<string>) {
+      s.combatEncounterId = action.payload;
+      s.peek = null;
+      s.placing = null;
+    },
+    combatClosed(s) {
+      s.combatEncounterId = null;
     },
     /** Goto (§4.2): animierter Sprung, landet als Ebene im Navigationsstack. */
     gotoRequested(s, action: PayloadAction<NavStackEntry>) {
@@ -153,6 +168,8 @@ export const {
   placingChanged,
   peeked,
   peekClosed,
+  combatOpened,
+  combatClosed,
   gotoRequested,
   jumpedBackTo,
   overviewRequested,

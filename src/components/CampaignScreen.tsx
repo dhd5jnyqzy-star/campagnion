@@ -1,16 +1,23 @@
 /**
- * Kampagnen-Ansicht (M2/M3): Kopfleiste mit Spielwelt-Uhr (§3.4), Canvas mit
- * dem aktuellen Bereich, Zurück-Leiste (Navigationsstack, §4.3), Toolbar,
- * Bibliotheks-Panel (§4.1, einklappbar) und Sidepanel (§4.2).
+ * Kampagnen-Ansicht (M2–M4): Kopfleiste mit Session-Steuerung und Spielwelt-
+ * Uhr (§3.4), Canvas mit dem aktuellen Bereich, Zurück-Leiste (§4.3), Toolbar,
+ * Bibliothek (§4.1), Sidepanel (§4.2), Kampfmodus (§4.4) und History-
+ * Zeitregler. Im History-Modus ist die Karte schreibgeschützt — alle
+ * Bearbeitungsflächen verschwinden, ein Banner zeigt den Zeitpunkt.
  */
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { CanvasView, WORLD_W } from '../features/canvas/CanvasView';
 import { useAssetUrl } from '../features/canvas/useAssetUrl';
-import { campaignClosed } from '../features/game/gameSlice';
+import { campaignClosed, historyExited } from '../features/game/gameSlice';
 import { selectCurrentArea, selectPrimaryMapImage } from '../features/game/selectors';
-import { appendGameEvent, importMapImage, type NewGameEvent } from '../features/game/thunks';
+import {
+  appendGameEvent,
+  endSession,
+  importMapImage,
+  type NewGameEvent,
+} from '../features/game/thunks';
 import {
   dockToggled,
   gridToggled,
@@ -20,9 +27,12 @@ import {
   type PlacingMode,
 } from '../features/nav/navSlice';
 import { formatGameTime } from '../lib/gameTime';
+import { newId } from '../lib/ids';
 import { closeCurrentStore } from '../persistence/db';
 import type { Area, GameTime, TimeOfDay } from '../types';
+import { CombatScreen } from './CombatScreen';
 import { Dock } from './Dock';
+import { HistoryBar } from './HistoryBar';
 import { Sidepanel } from './Sidepanel';
 
 const TIME_ORDER: readonly TimeOfDay[] = ['morning', 'noon', 'evening', 'night'];
@@ -56,17 +66,27 @@ function placingHint(placing: PlacingMode, encounterName?: string, groupName?: s
 
 export function CampaignScreen() {
   const dispatch = useAppDispatch();
-  const state = useAppSelector((s) => s.game.state);
+  const liveState = useAppSelector((s) => s.game.state);
+  const historyState = useAppSelector((s) => s.game.historyState);
+  const historyLabel = useAppSelector((s) => s.game.historyLabel);
   const error = useAppSelector((s) => s.game.error);
   const stack = useAppSelector((s) => s.nav.stack);
   const currentAreaId = useAppSelector((s) => s.nav.currentAreaId);
   const gridVisible = useAppSelector((s) => s.nav.gridVisible);
   const placing = useAppSelector((s) => s.nav.placing);
   const dockOpen = useAppSelector((s) => s.nav.dockOpen);
+  const combatEncounterId = useAppSelector((s) => s.nav.combatEncounterId);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  if (!state) return null;
-  const clock = state.campaign.clock;
+  if (!liveState) return null;
+  const inHistory = historyState !== null;
+  // Karte & Bereiche rendern aus der Vergangenheits-Sicht, falls aktiv (§3.4).
+  const state = historyState ?? liveState;
+  const clock = liveState.campaign.clock;
+  const activeSession = liveState.activeSessionId
+    ? liveState.sessions[liveState.activeSessionId]
+    : null;
 
   const area = selectCurrentArea(state, currentAreaId);
   const mapImage = area ? selectPrimaryMapImage(state, area.id) : undefined;
@@ -74,9 +94,19 @@ export function CampaignScreen() {
 
   const hint = placingHint(
     placing,
-    placing?.kind === 'encounter' ? state.encounters[placing.encounterId]?.name : undefined,
-    placing?.kind === 'group' ? state.groups[placing.groupId]?.name : undefined,
+    placing?.kind === 'encounter' ? liveState.encounters[placing.encounterId]?.name : undefined,
+    placing?.kind === 'group' ? liveState.groups[placing.groupId]?.name : undefined,
   );
+
+  const startSession = () => {
+    const count = Object.keys(liveState.sessions).length;
+    void dispatch(
+      appendGameEvent({
+        type: 'session.started',
+        payload: { sessionId: newId(), name: `Session ${count + 1}` },
+      }),
+    );
+  };
 
   return (
     <div className="campaign">
@@ -90,16 +120,31 @@ export function CampaignScreen() {
         >
           ‹ Kampagnen
         </button>
-        <h1 className="topbar-title">{state.campaign.name}</h1>
+        <h1 className="topbar-title">{liveState.campaign.name}</h1>
+        {activeSession ? (
+          <button
+            className="topbar-session active"
+            title="Session beenden (legt einen Sicherungspunkt an)"
+            onClick={() => void dispatch(endSession())}
+          >
+            ■ {activeSession.name}
+          </button>
+        ) : (
+          <button className="topbar-session" onClick={startSession} disabled={inHistory}>
+            ▶ Session
+          </button>
+        )}
         <button
           className={dockOpen ? 'topbar-dock active' : 'topbar-dock'}
           onClick={() => dispatch(dockToggled())}
+          disabled={inHistory}
         >
           Bibliothek
         </button>
         <button
           className="topbar-clock"
           title="Spielwelt-Uhr weiterstellen"
+          disabled={inHistory}
           onClick={() => void dispatch(appendGameEvent(advanceClockEvent(clock)))}
         >
           {formatGameTime(clock)} ▸
@@ -107,14 +152,31 @@ export function CampaignScreen() {
       </header>
 
       {error && <p className="error banner-error">{error}</p>}
+      {inHistory && (
+        <div className="history-banner">
+          <span>🕰 Vergangenheit — {historyLabel}</span>
+          <button onClick={() => dispatch(historyExited())}>Zur Gegenwart</button>
+        </div>
+      )}
 
       <main className="stage">
         {area && mapImage && asset ? (
-          <MapStage area={area} mapImage={mapImage} assetWidth={asset.width} assetHeight={asset.height} />
+          <MapStage
+            area={area}
+            mapImage={mapImage}
+            assetWidth={asset.width}
+            assetHeight={asset.height}
+          />
         ) : (
           <div className="canvas-placeholder">
-            <p>{area ? `"${area.name}" hat noch keine Karte.` : 'Noch keine Karte in dieser Kampagne.'}</p>
-            <button onClick={() => fileInputRef.current?.click()}>Karte importieren</button>
+            <p>
+              {area
+                ? `"${area.name}" hat noch keine Karte.`
+                : 'Noch keine Karte in dieser Kampagne.'}
+            </p>
+            {!inHistory && (
+              <button onClick={() => fileInputRef.current?.click()}>Karte importieren</button>
+            )}
           </div>
         )}
 
@@ -130,7 +192,7 @@ export function CampaignScreen() {
           )}
         </div>
 
-        {hint && (
+        {hint && !inHistory && (
           <div className="placing-bar">
             <span>{hint}</span>
             <button onClick={() => dispatch(placingChanged(null))}>Abbrechen</button>
@@ -139,37 +201,52 @@ export function CampaignScreen() {
 
         {mapImage && (
           <div className="toolbar">
-            <button
-              title="Kartenbild deckungsgleich tauschen"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              Karte tauschen
-            </button>
+            {!inHistory && (
+              <>
+                <button
+                  title="Kartenbild deckungsgleich tauschen"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Karte tauschen
+                </button>
+                <button
+                  className={placing?.kind === 'marker' ? 'active' : ''}
+                  onClick={() =>
+                    dispatch(
+                      placingChanged(placing?.kind === 'marker' ? null : { kind: 'marker' }),
+                    )
+                  }
+                >
+                  + Marker
+                </button>
+                <button
+                  className={placing?.kind === 'area' ? 'active' : ''}
+                  onClick={() =>
+                    dispatch(placingChanged(placing?.kind === 'area' ? null : { kind: 'area' }))
+                  }
+                >
+                  + Bereich
+                </button>
+              </>
+            )}
             <button className={gridVisible ? 'active' : ''} onClick={() => dispatch(gridToggled())}>
               Raster
             </button>
             <button
-              className={placing?.kind === 'marker' ? 'active' : ''}
-              onClick={() =>
-                dispatch(placingChanged(placing?.kind === 'marker' ? null : { kind: 'marker' }))
-              }
+              className={historyOpen || inHistory ? 'active' : ''}
+              onClick={() => setHistoryOpen(!historyOpen)}
             >
-              + Marker
-            </button>
-            <button
-              className={placing?.kind === 'area' ? 'active' : ''}
-              onClick={() =>
-                dispatch(placingChanged(placing?.kind === 'area' ? null : { kind: 'area' }))
-              }
-            >
-              + Bereich
+              Verlauf
             </button>
           </div>
         )}
 
-        {dockOpen && <Dock />}
-        <Sidepanel />
+        {historyOpen && <HistoryBar onClose={() => setHistoryOpen(false)} />}
+        {dockOpen && !inHistory && <Dock />}
+        {!inHistory && <Sidepanel />}
       </main>
+
+      {combatEncounterId && !inHistory && <CombatScreen encounterId={combatEncounterId} />}
 
       <input
         ref={fileInputRef}
